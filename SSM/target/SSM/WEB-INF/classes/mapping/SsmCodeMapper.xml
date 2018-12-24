@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanjun.dao.SsmCodeMapper">
+  <resultMap id="BaseResultMap" type="com.yuanjun.bean.SsmCode">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="phone" jdbcType="CHAR" property="phone" />
+    <result column="codenum" jdbcType="CHAR" property="codenum" />
+    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="expiretime" jdbcType="INTEGER" property="expiretime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, phone, codenum, addtime, expiretime
+  </sql>
+  <select id="selectByExample" parameterType="com.yuanjun.bean.SsmCodeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ssm_code
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_code
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_code
+    where phone = #{1} 
+  </select>
+  <select id="selectByPhoneDesc" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_code
+    where phone = #{1} ORDER BY expiretime DESC 
+  </select>
+  <select id="selectByPhoneAndCodenum"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_code as a
+    where phone = #{phone} and codenum = #{codenum}
+    ORDER BY a.addtime desc limit 0,1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ssm_code as a
+    where id = #{id,jdbcType=INTEGER}
+    
+  </delete>
+  <delete id="deleteByEexpiretim" parameterType="java.lang.Long">
+    delete from ssm_code
+    where expiretime  &lt; #{1}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yuanjun.bean.SsmCodeExample">
+    delete from ssm_code
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yuanjun.bean.SsmCode">
+    insert into ssm_code (id, phone, codenum, 
+      addtime, expiretime)
+    values (#{id,jdbcType=INTEGER}, #{phone,jdbcType=CHAR}, #{codenum,jdbcType=CHAR}, 
+      #{addtime,jdbcType=TIMESTAMP}, #{expiretime,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmCode">
+    insert into ssm_code
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="codenum != null">
+        codenum,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+      <if test="expiretime != null">
+        expiretime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=CHAR},
+      </if>
+      <if test="codenum != null">
+        #{codenum,jdbcType=CHAR},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expiretime != null">
+        #{expiretime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yuanjun.bean.SsmCodeExample" resultType="java.lang.Long">
+    select count(*) from ssm_code
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ssm_code
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=CHAR},
+      </if>
+      <if test="record.codenum != null">
+        codenum = #{record.codenum,jdbcType=CHAR},
+      </if>
+      <if test="record.addtime != null">
+        addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.expiretime != null">
+        expiretime = #{record.expiretime,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ssm_code
+    set id = #{record.id,jdbcType=INTEGER},
+      phone = #{record.phone,jdbcType=CHAR},
+      codenum = #{record.codenum,jdbcType=CHAR},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      expiretime = #{record.expiretime,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuanjun.bean.SsmCode">
+    update ssm_code
+    <set>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=CHAR},
+      </if>
+      <if test="codenum != null">
+        codenum = #{codenum,jdbcType=CHAR},
+      </if>
+      <if test="addtime != null">
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expiretime != null">
+        expiretime = #{expiretime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuanjun.bean.SsmCode">
+    update ssm_code
+    set phone = #{phone,jdbcType=CHAR},
+      codenum = #{codenum,jdbcType=CHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      expiretime = #{expiretime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanjun.dao.SsmQuestionStudyMapper">
+  <resultMap id="BaseResultMap" type="com.yuanjun.bean.SsmQuestionStudy">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="userid" jdbcType="CHAR" property="userid" />
+    <result column="categorypid" jdbcType="TINYINT" property="categorypid" />
+    <result column="categoryid" jdbcType="TINYINT" property="categoryid" />
+    <result column="chapterid" jdbcType="CHAR" property="chapterid" />
+    <result column="questionid" jdbcType="CHAR" property="questionid" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="myanser" jdbcType="VARCHAR" property="myanser" />
+    <result column="flag" jdbcType="TINYINT" property="flag" />
+  </resultMap>
+  
+			 <resultMap
+				type="com.yuanjun.vo.frontStudy.StudyQuestion"
+				id="StudyQuestion">
+				<id column="id" property="id"/>
+				<result column="questionid" property="questionid" />
+				<result column="title" property="title" />
+				<result column="type" property="type" />
+				<result column="correctanswer" property="correctanswer" />
+				<result column="myanser" property="myanser" />
+				<collection property="studyOptionList"
+					ofType="com.yuanjun.vo.frontStudy.StudyOption">
+					<result column="no" property="no" />
+					<result column="optionTitle" property="optionTitle" />
+					<result column="sortNo" property="sortNo" />
+				</collection>
+			</resultMap>
+  
+		   <select id="getStudyInfoByUserId"  resultMap="StudyQuestion"  >
+			SELECT
+			A.id  id,
+			A.questionid questionid,		
+			B.title title,
+			B.type type,
+			B.correctanswer correctanswer,
+			C.no no,
+			C.title optionTitle ,
+			C.sort_no sortNo,
+			A.myanser myanser		
+			FROM
+			ssm_question_study AS A
+			LEFT JOIN ssm_question AS B ON A.questionid = B.questionid LEFT JOIN
+			ssm_question_option AS C ON A.questionid = C.questionid
+			WHERE
+			A.flag =1 
+			and  A.kind=2
+			and A.userid = #{userid}
+			
+			and A.categoryid= #{category_id}
+		    ORDER BY B.sort_no,C.sort_no 
+			LIMIT #{start},#{end} 
+   
+   </select>
+	<select id="getCategoryTitle" resultType="com.yuanjun.vo.frontStudy.StudyTitleVo">
+		SELECT
+		a.categoryid categoryid ,b.title title
+		FROM
+		ssm_question_study a
+		LEFT JOIN ssm_category b ON a.categoryid = b.id
+		WHERE a.flag =1
+		AND  a.kind =2
+		AND a.userid = #{userid}
+  
+    </select>
+    
+   <!-- 批量保存 -->
+    <insert id="saveStudyAll" parameterType="com.yuanjun.vo.frontStudy.QuestionStudyModel">
+        INSERT into  ssm_question_study  (userid,categorypid,categoryid,questionid,myanser ) VALUES
+     <foreach collection="questionStudyModel.anserList" index="index" item="item" separator=",">
+        (
+          #{questionStudyModel.userid},
+          #{questionStudyModel.categorypid},
+          #{questionStudyModel.categoryid},         
+          #{item.questionid},
+          #{item.myanser}
+        )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        userid=values(userid),
+        categorypid=values(categorypid),
+        categoryid=values(categoryid),
+        questionid=values(questionid),
+        myanser=values(myanser)
+    </insert>
+    
+  
+  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  
+  
+  
+  <sql id="Base_Column_List">
+    id, userid, categorypid, categoryid, chapterid, questionid, status, kind, addtime, 
+    myanser, flag
+  </sql>
+  <select id="selectByExample" parameterType="com.yuanjun.bean.SsmQuestionStudyExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ssm_question_study
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_question_study
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ssm_question_study
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yuanjun.bean.SsmQuestionStudyExample">
+    delete from ssm_question_study
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yuanjun.bean.SsmQuestionStudy">
+    insert into ssm_question_study (id, userid, categorypid, 
+      categoryid, chapterid, questionid, 
+      status, kind, addtime, 
+      myanser, flag)
+    values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=CHAR}, #{categorypid,jdbcType=TINYINT}, 
+      #{categoryid,jdbcType=TINYINT}, #{chapterid,jdbcType=CHAR}, #{questionid,jdbcType=CHAR}, 
+      #{status,jdbcType=TINYINT}, #{kind,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP}, 
+      #{myanser,jdbcType=VARCHAR}, #{flag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmQuestionStudy">
+    insert into ssm_question_study
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="categorypid != null">
+        categorypid,
+      </if>
+      <if test="categoryid != null">
+        categoryid,
+      </if>
+      <if test="chapterid != null">
+        chapterid,
+      </if>
+      <if test="questionid != null">
+        questionid,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="kind != null">
+        kind,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+      <if test="myanser != null">
+        myanser,
+      </if>
+      <if test="flag != null">
+        flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=CHAR},
+      </if>
+      <if test="categorypid != null">
+        #{categorypid,jdbcType=TINYINT},
+      </if>
+      <if test="categoryid != null">
+        #{categoryid,jdbcType=TINYINT},
+      </if>
+      <if test="chapterid != null">
+        #{chapterid,jdbcType=CHAR},
+      </if>
+      <if test="questionid != null">
+        #{questionid,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="kind != null">
+        #{kind,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="myanser != null">
+        #{myanser,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yuanjun.bean.SsmQuestionStudyExample" resultType="java.lang.Long">
+    select count(*) from ssm_question_study
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ssm_question_study
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.userid != null">
+        userid = #{record.userid,jdbcType=CHAR},
+      </if>
+      <if test="record.categorypid != null">
+        categorypid = #{record.categorypid,jdbcType=TINYINT},
+      </if>
+      <if test="record.categoryid != null">
+        categoryid = #{record.categoryid,jdbcType=TINYINT},
+      </if>
+      <if test="record.chapterid != null">
+        chapterid = #{record.chapterid,jdbcType=CHAR},
+      </if>
+      <if test="record.questionid != null">
+        questionid = #{record.questionid,jdbcType=CHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.kind != null">
+        kind = #{record.kind,jdbcType=TINYINT},
+      </if>
+      <if test="record.addtime != null">
+        addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.myanser != null">
+        myanser = #{record.myanser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.flag != null">
+        flag = #{record.flag,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ssm_question_study
+    set id = #{record.id,jdbcType=INTEGER},
+      userid = #{record.userid,jdbcType=CHAR},
+      categorypid = #{record.categorypid,jdbcType=TINYINT},
+      categoryid = #{record.categoryid,jdbcType=TINYINT},
+      chapterid = #{record.chapterid,jdbcType=CHAR},
+      questionid = #{record.questionid,jdbcType=CHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      kind = #{record.kind,jdbcType=TINYINT},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      myanser = #{record.myanser,jdbcType=VARCHAR},
+      flag = #{record.flag,jdbcType=TINYINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuanjun.bean.SsmQuestionStudy">
+    update ssm_question_study
+    <set>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=CHAR},
+      </if>
+      <if test="categorypid != null">
+        categorypid = #{categorypid,jdbcType=TINYINT},
+      </if>
+      <if test="categoryid != null">
+        categoryid = #{categoryid,jdbcType=TINYINT},
+      </if>
+      <if test="chapterid != null">
+        chapterid = #{chapterid,jdbcType=CHAR},
+      </if>
+      <if test="questionid != null">
+        questionid = #{questionid,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="kind != null">
+        kind = #{kind,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null">
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="myanser != null">
+        myanser = #{myanser,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuanjun.bean.SsmQuestionStudy">
+    update ssm_question_study
+    set userid = #{userid,jdbcType=CHAR},
+      categorypid = #{categorypid,jdbcType=TINYINT},
+      categoryid = #{categoryid,jdbcType=TINYINT},
+      chapterid = #{chapterid,jdbcType=CHAR},
+      questionid = #{questionid,jdbcType=CHAR},
+      status = #{status,jdbcType=TINYINT},
+      kind = #{kind,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      myanser = #{myanser,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

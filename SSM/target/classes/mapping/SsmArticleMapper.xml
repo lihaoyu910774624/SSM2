@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanjun.dao.SsmArticleMapper">
+  <resultMap id="BaseResultMap" type="com.yuanjun.bean.SsmArticle">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="category_id" jdbcType="TINYINT" property="categoryId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="browser" jdbcType="BIGINT" property="browser" />
+    <result column="flag" jdbcType="TINYINT" property="flag" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yuanjun.bean.SsmArticle">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, category_id, title, addtime, browser, flag
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.yuanjun.bean.SsmArticleExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ssm_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.yuanjun.bean.SsmArticleExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ssm_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="getCount"  resultType="java.lang.Integer">
+        SELECT count(*) FROM ssm_article A        WHERE        A.flag =1
+  </select>
+   <select id="getById" parameterType="java.lang.String" resultType="com.yuanjun.vo.ArticlInfo">
+                         SELECT
+                                A.id  id ,
+                                A.category_id categoryId ,
+                                A.title title,
+                                A.content content,
+                                A.addtime addtime,
+                                B.title categoryTitle
+                                FROM
+                                ssm_article A
+                                left JOIN ssm_category B ON   A.category_id = B.id
+                                WHERE
+                                A.flag =1
+                                AND A.id = #{1}
+  </select>
+  <select id="getFive" parameterType="java.lang.String" resultType="com.yuanjun.vo.articlvo.ArticlTitleId">
+	SELECT
+	A.id id,
+	A.title title
+	FROM
+	ssm_article AS A
+	WHERE
+	A.flag = 1
+	AND A.category_id = #{categoryId}
+	 ORDER BY A.addtime desc 
+	LIMIT 5;
+                       
+  </select>
+  <select id="getTitleAll" parameterType="java.lang.String" resultType="com.yuanjun.vo.articlvo.ArticlTitleId">
+	SELECT
+	A.id id,
+	A.title title
+	FROM
+	ssm_article AS A
+	WHERE
+	A.flag = 1
+	AND A.category_id = #{categoryId}
+	ORDER BY A.addtime desc 
+	
+                       
+  </select>
+  <select id="getAll" parameterType="java.lang.String" resultType="com.yuanjun.vo.ArticlAllInfo">
+                         SELECT
+                                A.id  id ,
+                                A.category_id categoryPId ,
+                                A.title title,                               
+                                A.addtime addtime,
+                                B.title categoryTitle
+                                FROM
+                                ssm_article A
+                                left JOIN ssm_category B ON   A.category_id = B.id
+                                WHERE
+                                A.flag =1
+                                <if test="title != null and title!=''">
+                    and A.title  LIKE  CONCAT('%',#{title},'%')       
+                </if>
+                LIMIT #{start},#{end}
+                       
+  </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ssm_article
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ssm_article
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yuanjun.bean.SsmArticleExample">
+    delete from ssm_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yuanjun.bean.SsmArticle">
+    insert into ssm_article (id, category_id, title, 
+      addtime, browser, flag, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=TINYINT}, #{title,jdbcType=VARCHAR}, 
+      #{addtime,jdbcType=TIMESTAMP}, #{browser,jdbcType=BIGINT}, #{flag,jdbcType=TINYINT}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmArticle">
+    insert into ssm_article
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+      <if test="browser != null">
+        browser,
+      </if>
+      <if test="flag != null">
+        flag,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=TINYINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="browser != null">
+        #{browser,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=TINYINT},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yuanjun.bean.SsmArticleExample" resultType="java.lang.Long">
+    select count(*) from ssm_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ssm_article
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.categoryId != null">
+        category_id = #{record.categoryId,jdbcType=TINYINT},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addtime != null">
+        addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.browser != null">
+        browser = #{record.browser,jdbcType=BIGINT},
+      </if>
+      <if test="record.flag != null">
+        flag = #{record.flag,jdbcType=TINYINT},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update ssm_article
+    set id = #{record.id,jdbcType=INTEGER},
+      category_id = #{record.categoryId,jdbcType=TINYINT},
+      title = #{record.title,jdbcType=VARCHAR},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      browser = #{record.browser,jdbcType=BIGINT},
+      flag = #{record.flag,jdbcType=TINYINT},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ssm_article
+    set id = #{record.id,jdbcType=INTEGER},
+      category_id = #{record.categoryId,jdbcType=TINYINT},
+      title = #{record.title,jdbcType=VARCHAR},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      browser = #{record.browser,jdbcType=BIGINT},
+      flag = #{record.flag,jdbcType=TINYINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuanjun.bean.SsmArticle">
+    update ssm_article
+    <set>
+      <if test="categoryId != null">
+        category_id = #{categoryId,jdbcType=TINYINT},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null">
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="browser != null">
+        browser = #{browser,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=TINYINT},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yuanjun.bean.SsmArticle">
+    update ssm_article
+    set category_id = #{categoryId,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      browser = #{browser,jdbcType=BIGINT},
+      flag = #{flag,jdbcType=TINYINT},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuanjun.bean.SsmArticle">
+    update ssm_article
+    set category_id = #{categoryId,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      browser = #{browser,jdbcType=BIGINT},
+      flag = #{flag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

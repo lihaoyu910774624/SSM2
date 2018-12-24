@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanjun.dao.SsmVipRecordMapper">
+  <resultMap id="BaseResultMap" type="com.yuanjun.bean.SsmVipRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="out_trade_no" jdbcType="CHAR" property="outTradeNo" />
+    <result column="user_id" jdbcType="CHAR" property="userId" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="transaction_id" jdbcType="CHAR" property="transactionId" />
+    <result column="prepay_id" jdbcType="CHAR" property="prepayId" />
+    <result column="categoryid" jdbcType="INTEGER" property="categoryid" />
+    <result column="categorypid" jdbcType="INTEGER" property="categorypid" />
+    <result column="total_fee" jdbcType="INTEGER" property="totalFee" />
+    <result column="product_id" jdbcType="CHAR" property="productId" />
+    <result column="product_price" jdbcType="INTEGER" property="productPrice" />
+    <result column="ispay" jdbcType="TINYINT" property="ispay" />
+    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="paytime" jdbcType="TIMESTAMP" property="paytime" />
+    <result column="exprietime" jdbcType="INTEGER" property="exprietime" />
+    <result column="payexprietime" jdbcType="INTEGER" property="payexprietime" />
+    <result column="flag" jdbcType="TINYINT" property="flag" />
+  </resultMap>
+  
+  
+  <select id="getVipRecordByOutTradeNo" resultType="com.yuanjun.comm.viprecord.VipRecordDto" >
+   select 
+			A.out_trade_no,
+			A.total_fee,
+			A.exprietime,
+			A.paytime,
+			A.ispay,
+			B.title,
+			B.price,
+			B.effectdays,
+			C.phone,
+			D.title as categoryTitle
+		from ssm_vip_record as A 
+			left join ssm_vip_product as B on A.product_id = B.product_id
+			left join ssm_user as C on A.user_id=C.userid 
+			left join ssm_category as D on A.categoryid = D.id
+		where A.flag=1 and A.out_trade_no=#{out_trade_no}; 
+  </select>
+  
+  <select id="getVipRecord"  resultType="com.yuanjun.comm.viprecord.VipRecordVo">
+      select 
+		A.out_trade_no,
+		A.total_fee,
+		A.exprietime,
+		A.paytime,
+		B.title,
+		C.phone,
+		D.title as categoryTitle
+		from ssm_vip_record as A 
+		left join ssm_vip_product as B on A.product_id = B.product_id
+		left join ssm_user as C on A.user_id=C.userid 
+		left join ssm_category as D on A.categoryid = D.id
+		where A.flag=1 and C.phone    LIKE  CONCAT('%',#{phone},'%')    
+    
+    
+  </select>
+  
+  
+  
+  <select id="getByUserId" parameterType="java.lang.String"
+	resultType="com.yuanjun.vo.frontRecord.RecordVo">
+	select b.title title ,a.addtime addtime , a.exprietime exprietime  from ssm_vip_record a LEFT JOIN ssm_category b ON
+	a.categoryid=b.id
+	and a.user_id = #{userId} ;
+</select>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  
+  
+  
+  
+  <sql id="Base_Column_List">
+    id, out_trade_no, user_id, openid, transaction_id, prepay_id, categoryid, categorypid, 
+    total_fee, product_id, product_price, ispay, addtime, paytime, exprietime, payexprietime, 
+    flag
+  </sql>
+  <select id="selectByExample" parameterType="com.yuanjun.bean.SsmVipRecordExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ssm_vip_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_vip_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ssm_vip_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yuanjun.bean.SsmVipRecordExample">
+    delete from ssm_vip_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yuanjun.bean.SsmVipRecord">
+    insert into ssm_vip_record (id, out_trade_no, user_id, 
+      openid, transaction_id, prepay_id, 
+      categoryid, categorypid, total_fee, 
+      product_id, product_price, ispay, 
+      addtime, paytime, exprietime, 
+      payexprietime, flag)
+    values (#{id,jdbcType=INTEGER}, #{outTradeNo,jdbcType=CHAR}, #{userId,jdbcType=CHAR}, 
+      #{openid,jdbcType=VARCHAR}, #{transactionId,jdbcType=CHAR}, #{prepayId,jdbcType=CHAR}, 
+      #{categoryid,jdbcType=INTEGER}, #{categorypid,jdbcType=INTEGER}, #{totalFee,jdbcType=INTEGER}, 
+      #{productId,jdbcType=CHAR}, #{productPrice,jdbcType=INTEGER}, #{ispay,jdbcType=TINYINT}, 
+      #{addtime,jdbcType=TIMESTAMP}, #{paytime,jdbcType=TIMESTAMP}, #{exprietime,jdbcType=INTEGER}, 
+      #{payexprietime,jdbcType=INTEGER}, #{flag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmVipRecord">
+    insert into ssm_vip_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="openid != null">
+        openid,
+      </if>
+      <if test="transactionId != null">
+        transaction_id,
+      </if>
+      <if test="prepayId != null">
+        prepay_id,
+      </if>
+      <if test="categoryid != null">
+        categoryid,
+      </if>
+      <if test="categorypid != null">
+        categorypid,
+      </if>
+      <if test="totalFee != null">
+        total_fee,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="productPrice != null">
+        product_price,
+      </if>
+      <if test="ispay != null">
+        ispay,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+      <if test="paytime != null">
+        paytime,
+      </if>
+      <if test="exprietime != null">
+        exprietime,
+      </if>
+      <if test="payexprietime != null">
+        payexprietime,
+      </if>
+      <if test="flag != null">
+        flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=CHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=CHAR},
+      </if>
+      <if test="openid != null">
+        #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null">
+        #{transactionId,jdbcType=CHAR},
+      </if>
+      <if test="prepayId != null">
+        #{prepayId,jdbcType=CHAR},
+      </if>
+      <if test="categoryid != null">
+        #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="categorypid != null">
+        #{categorypid,jdbcType=INTEGER},
+      </if>
+      <if test="totalFee != null">
+        #{totalFee,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=CHAR},
+      </if>
+      <if test="productPrice != null">
+        #{productPrice,jdbcType=INTEGER},
+      </if>
+      <if test="ispay != null">
+        #{ispay,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paytime != null">
+        #{paytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exprietime != null">
+        #{exprietime,jdbcType=INTEGER},
+      </if>
+      <if test="payexprietime != null">
+        #{payexprietime,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yuanjun.bean.SsmVipRecordExample" resultType="java.lang.Long">
+    select count(*) from ssm_vip_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ssm_vip_record
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.outTradeNo != null">
+        out_trade_no = #{record.outTradeNo,jdbcType=CHAR},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=CHAR},
+      </if>
+      <if test="record.openid != null">
+        openid = #{record.openid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.transactionId != null">
+        transaction_id = #{record.transactionId,jdbcType=CHAR},
+      </if>
+      <if test="record.prepayId != null">
+        prepay_id = #{record.prepayId,jdbcType=CHAR},
+      </if>
+      <if test="record.categoryid != null">
+        categoryid = #{record.categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="record.categorypid != null">
+        categorypid = #{record.categorypid,jdbcType=INTEGER},
+      </if>
+      <if test="record.totalFee != null">
+        total_fee = #{record.totalFee,jdbcType=INTEGER},
+      </if>
+      <if test="record.productId != null">
+        product_id = #{record.productId,jdbcType=CHAR},
+      </if>
+      <if test="record.productPrice != null">
+        product_price = #{record.productPrice,jdbcType=INTEGER},
+      </if>
+      <if test="record.ispay != null">
+        ispay = #{record.ispay,jdbcType=TINYINT},
+      </if>
+      <if test="record.addtime != null">
+        addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.paytime != null">
+        paytime = #{record.paytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.exprietime != null">
+        exprietime = #{record.exprietime,jdbcType=INTEGER},
+      </if>
+      <if test="record.payexprietime != null">
+        payexprietime = #{record.payexprietime,jdbcType=INTEGER},
+      </if>
+      <if test="record.flag != null">
+        flag = #{record.flag,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ssm_vip_record
+    set id = #{record.id,jdbcType=INTEGER},
+      out_trade_no = #{record.outTradeNo,jdbcType=CHAR},
+      user_id = #{record.userId,jdbcType=CHAR},
+      openid = #{record.openid,jdbcType=VARCHAR},
+      transaction_id = #{record.transactionId,jdbcType=CHAR},
+      prepay_id = #{record.prepayId,jdbcType=CHAR},
+      categoryid = #{record.categoryid,jdbcType=INTEGER},
+      categorypid = #{record.categorypid,jdbcType=INTEGER},
+      total_fee = #{record.totalFee,jdbcType=INTEGER},
+      product_id = #{record.productId,jdbcType=CHAR},
+      product_price = #{record.productPrice,jdbcType=INTEGER},
+      ispay = #{record.ispay,jdbcType=TINYINT},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      paytime = #{record.paytime,jdbcType=TIMESTAMP},
+      exprietime = #{record.exprietime,jdbcType=INTEGER},
+      payexprietime = #{record.payexprietime,jdbcType=INTEGER},
+      flag = #{record.flag,jdbcType=TINYINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuanjun.bean.SsmVipRecord">
+    update ssm_vip_record
+    <set>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=CHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=CHAR},
+      </if>
+      <if test="openid != null">
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null">
+        transaction_id = #{transactionId,jdbcType=CHAR},
+      </if>
+      <if test="prepayId != null">
+        prepay_id = #{prepayId,jdbcType=CHAR},
+      </if>
+      <if test="categoryid != null">
+        categoryid = #{categoryid,jdbcType=INTEGER},
+      </if>
+      <if test="categorypid != null">
+        categorypid = #{categorypid,jdbcType=INTEGER},
+      </if>
+      <if test="totalFee != null">
+        total_fee = #{totalFee,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=CHAR},
+      </if>
+      <if test="productPrice != null">
+        product_price = #{productPrice,jdbcType=INTEGER},
+      </if>
+      <if test="ispay != null">
+        ispay = #{ispay,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null">
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paytime != null">
+        paytime = #{paytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exprietime != null">
+        exprietime = #{exprietime,jdbcType=INTEGER},
+      </if>
+      <if test="payexprietime != null">
+        payexprietime = #{payexprietime,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuanjun.bean.SsmVipRecord">
+    update ssm_vip_record
+    set out_trade_no = #{outTradeNo,jdbcType=CHAR},
+      user_id = #{userId,jdbcType=CHAR},
+      openid = #{openid,jdbcType=VARCHAR},
+      transaction_id = #{transactionId,jdbcType=CHAR},
+      prepay_id = #{prepayId,jdbcType=CHAR},
+      categoryid = #{categoryid,jdbcType=INTEGER},
+      categorypid = #{categorypid,jdbcType=INTEGER},
+      total_fee = #{totalFee,jdbcType=INTEGER},
+      product_id = #{productId,jdbcType=CHAR},
+      product_price = #{productPrice,jdbcType=INTEGER},
+      ispay = #{ispay,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      paytime = #{paytime,jdbcType=TIMESTAMP},
+      exprietime = #{exprietime,jdbcType=INTEGER},
+      payexprietime = #{payexprietime,jdbcType=INTEGER},
+      flag = #{flag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

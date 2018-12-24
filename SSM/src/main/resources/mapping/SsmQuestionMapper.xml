@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuanjun.dao.SsmQuestionMapper">
+  <resultMap id="BaseResultMap" type="com.yuanjun.bean.SsmQuestion">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="questionid" jdbcType="CHAR" property="questionid" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="fraction" jdbcType="INTEGER" property="fraction" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="correctanswer" jdbcType="VARCHAR" property="correctanswer" />
+    <result column="categoryid" jdbcType="TINYINT" property="categoryid" />
+    <result column="subjectid" jdbcType="TINYINT" property="subjectid" />
+    <result column="chapterid" jdbcType="CHAR" property="chapterid" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="browse" jdbcType="INTEGER" property="browse" />
+    <result column="sort_no" jdbcType="SMALLINT" property="sortNo" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+    <result column="analysis" jdbcType="VARCHAR" property="analysis" />
+    <result column="brief" jdbcType="VARCHAR" property="brief" />
+    <result column="flag" jdbcType="TINYINT" property="flag" />
+  </resultMap>
+  <select id="countByChapter" resultType="java.lang.Long" >
+     select count(*) from ssm_question a WHERE a.flag =1 
+     and  a.chapterid = #{chapterId} 
+  </select>
+  <select id="countByType" resultType="java.lang.Long" >
+    select count(*) from ssm_question a WHERE a.flag =1   
+    and a.categoryid = #{category_pid}
+    and a.subjectid = #{category_id}
+    and a.chapterid = #{chapter_id}
+    and a.kind =#{kind}
+    and a.type = #{type}
+  </select>
+  <select id="getAll" resultType="com.yuanjun.vo.question.QuestionDto">
+	SELECT
+	A.questionid questionid,
+	A.title title,
+	B.title categoryPidTitle,
+	C.title categoryidTitle,
+	D.title chapterTitle,
+	A.type type ,
+	A.status status,
+	A.addtime addtime ,
+	A.browse browse ,
+	A.kind kind,
+	A.sort_no sort_no
+	FROM
+	ssm_question AS A
+	LEFT JOIN ssm_category B ON A.categoryid = B.id
+	LEFT JOIN ssm_category AS C ON A.subjectid = C.id
+	LEFT JOIN ssm_question_chapter as D ON A.chapterid =D.chapter_id
+	WHERE
+	A.flag = 1  
+	   
+     <if test='category_pid !="0"' >
+      and A.categoryid = #{category_pid}      
+    </if>
+     <if test='category_id !="0" ' >
+      and A.subjectid = #{category_id}      
+    </if>
+    <if test='chapter_id !="0"' >
+      and A.chapterid = #{chapter_id}      
+    </if>
+    <if test="kind !=null and kind != ''" >
+      and   A.kind = #{kind}     
+    </if>
+    <if test="title !=null and title != ''" >
+      and A.title LIKE  CONCAT('%',#{title},'%')        
+    </if>
+    ORDER BY A.sort_no
+    limit #{start},#{end}
+  </select>
+  <resultMap type="com.yuanjun.vo.FrontQuestion.TrainingQuestion" id="TrainingQuestion">
+    <result column="questionid"  property="questionid" />
+    <result column="title"  property="title" />
+    <result column="type"  property="type" />
+    <result column="correctanswer"  property="correctanswer" />
+    <collection property="option" ofType="com.yuanjun.vo.FrontQuestion.TrainingOption">
+      <result column="no"  property="no" />
+      <result column="optionTitle"  property="optionTitle" />
+      <result column="sortNo"  property="sortNo" />  
+      <result column="myanser"  property="myanser" />    
+    </collection>
+  </resultMap>
+  <select id="findTrainingQuestion" resultMap="TrainingQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,			
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo,
+			IFNULL(c.myanser,"")  myanser
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid 
+			LEFT JOIN (select questionid,myanser from ssm_question_study where userid=#{userid}) AS c ON a.questionid = c.questionid 			
+			WHERE
+			a.flag = 1
+			and a.kind = 2			
+			and a.categoryid =#{category_pid}
+			and a.subjectid= #{category_id}
+			<if test="chapter_id!=null and chapter_id!=''">
+			  and a.chapterid= #{chapter_id}
+			</if>
+			ORDER BY a.sort_no,b.sort_no 
+			LIMIT #{start},#{end} 
+  
+   </select>
+   <select id="findTrainingQuestionFree" resultMap="TrainingQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo ,
+			IFNULL(c.myanser,"")  myanser
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			LEFT JOIN (select questionid,myanser from ssm_question_study where userid=#{userid}) AS c ON a.questionid = c.questionid
+			WHERE
+			a.flag = 1
+			and a.kind = 1
+			
+			and a.categoryid =#{category_pid}
+			and a.subjectid= #{category_id}			
+			and a.chapterid= #{chapter_id}
+			ORDER BY a.sort_no ,b.sort_no 
+			LIMIT #{start},#{end} 
+  
+   </select>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, questionid, title, fraction, type, correctanswer, categoryid, subjectid, chapterid, 
+    status, addtime, browse, sort_no, kind, analysis, brief, flag
+  </sql>
+  <select id="selectByExample" parameterType="com.yuanjun.bean.SsmQuestionExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ssm_question
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_question
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ssm_question
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yuanjun.bean.SsmQuestionExample">
+    delete from ssm_question
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yuanjun.bean.SsmQuestion">
+    insert into ssm_question (id, questionid, title, 
+      fraction, type, correctanswer, 
+      categoryid, subjectid, chapterid, 
+      status, addtime, browse, 
+      sort_no, kind, analysis, 
+      brief, flag)
+    values (#{id,jdbcType=INTEGER}, #{questionid,jdbcType=CHAR}, #{title,jdbcType=VARCHAR}, 
+      #{fraction,jdbcType=INTEGER}, #{type,jdbcType=TINYINT}, #{correctanswer,jdbcType=VARCHAR}, 
+      #{categoryid,jdbcType=TINYINT}, #{subjectid,jdbcType=TINYINT}, #{chapterid,jdbcType=CHAR}, 
+      #{status,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP}, #{browse,jdbcType=INTEGER}, 
+      #{sortNo,jdbcType=SMALLINT}, #{kind,jdbcType=TINYINT}, #{analysis,jdbcType=VARCHAR}, 
+      #{brief,jdbcType=VARCHAR}, #{flag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmQuestion">
+    insert into ssm_question
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="questionid != null">
+        questionid,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="fraction != null">
+        fraction,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="correctanswer != null">
+        correctanswer,
+      </if>
+      <if test="categoryid != null">
+        categoryid,
+      </if>
+      <if test="subjectid != null">
+        subjectid,
+      </if>
+      <if test="chapterid != null">
+        chapterid,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+      <if test="browse != null">
+        browse,
+      </if>
+      <if test="sortNo != null">
+        sort_no,
+      </if>
+      <if test="kind != null">
+        kind,
+      </if>
+      <if test="analysis != null">
+        analysis,
+      </if>
+      <if test="brief != null">
+        brief,
+      </if>
+      <if test="flag != null">
+        flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="questionid != null">
+        #{questionid,jdbcType=CHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="fraction != null">
+        #{fraction,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="correctanswer != null">
+        #{correctanswer,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null">
+        #{categoryid,jdbcType=TINYINT},
+      </if>
+      <if test="subjectid != null">
+        #{subjectid,jdbcType=TINYINT},
+      </if>
+      <if test="chapterid != null">
+        #{chapterid,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="browse != null">
+        #{browse,jdbcType=INTEGER},
+      </if>
+      <if test="sortNo != null">
+        #{sortNo,jdbcType=SMALLINT},
+      </if>
+      <if test="kind != null">
+        #{kind,jdbcType=TINYINT},
+      </if>
+      <if test="analysis != null">
+        #{analysis,jdbcType=VARCHAR},
+      </if>
+      <if test="brief != null">
+        #{brief,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yuanjun.bean.SsmQuestionExample" resultType="java.lang.Long">
+    select count(*) from ssm_question
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ssm_question
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.questionid != null">
+        questionid = #{record.questionid,jdbcType=CHAR},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fraction != null">
+        fraction = #{record.fraction,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=TINYINT},
+      </if>
+      <if test="record.correctanswer != null">
+        correctanswer = #{record.correctanswer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.categoryid != null">
+        categoryid = #{record.categoryid,jdbcType=TINYINT},
+      </if>
+      <if test="record.subjectid != null">
+        subjectid = #{record.subjectid,jdbcType=TINYINT},
+      </if>
+      <if test="record.chapterid != null">
+        chapterid = #{record.chapterid,jdbcType=CHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.addtime != null">
+        addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.browse != null">
+        browse = #{record.browse,jdbcType=INTEGER},
+      </if>
+      <if test="record.sortNo != null">
+        sort_no = #{record.sortNo,jdbcType=SMALLINT},
+      </if>
+      <if test="record.kind != null">
+        kind = #{record.kind,jdbcType=TINYINT},
+      </if>
+      <if test="record.analysis != null">
+        analysis = #{record.analysis,jdbcType=VARCHAR},
+      </if>
+      <if test="record.brief != null">
+        brief = #{record.brief,jdbcType=VARCHAR},
+      </if>
+      <if test="record.flag != null">
+        flag = #{record.flag,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ssm_question
+    set id = #{record.id,jdbcType=INTEGER},
+      questionid = #{record.questionid,jdbcType=CHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      fraction = #{record.fraction,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=TINYINT},
+      correctanswer = #{record.correctanswer,jdbcType=VARCHAR},
+      categoryid = #{record.categoryid,jdbcType=TINYINT},
+      subjectid = #{record.subjectid,jdbcType=TINYINT},
+      chapterid = #{record.chapterid,jdbcType=CHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      browse = #{record.browse,jdbcType=INTEGER},
+      sort_no = #{record.sortNo,jdbcType=SMALLINT},
+      kind = #{record.kind,jdbcType=TINYINT},
+      analysis = #{record.analysis,jdbcType=VARCHAR},
+      brief = #{record.brief,jdbcType=VARCHAR},
+      flag = #{record.flag,jdbcType=TINYINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yuanjun.bean.SsmQuestion">
+    update ssm_question
+    <set>
+      <if test="questionid != null">
+        questionid = #{questionid,jdbcType=CHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="fraction != null">
+        fraction = #{fraction,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="correctanswer != null">
+        correctanswer = #{correctanswer,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryid != null">
+        categoryid = #{categoryid,jdbcType=TINYINT},
+      </if>
+      <if test="subjectid != null">
+        subjectid = #{subjectid,jdbcType=TINYINT},
+      </if>
+      <if test="chapterid != null">
+        chapterid = #{chapterid,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="addtime != null">
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="browse != null">
+        browse = #{browse,jdbcType=INTEGER},
+      </if>
+      <if test="sortNo != null">
+        sort_no = #{sortNo,jdbcType=SMALLINT},
+      </if>
+      <if test="kind != null">
+        kind = #{kind,jdbcType=TINYINT},
+      </if>
+      <if test="analysis != null">
+        analysis = #{analysis,jdbcType=VARCHAR},
+      </if>
+      <if test="brief != null">
+        brief = #{brief,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yuanjun.bean.SsmQuestion">
+    update ssm_question
+    set questionid = #{questionid,jdbcType=CHAR},
+      title = #{title,jdbcType=VARCHAR},
+      fraction = #{fraction,jdbcType=INTEGER},
+      type = #{type,jdbcType=TINYINT},
+      correctanswer = #{correctanswer,jdbcType=VARCHAR},
+      categoryid = #{categoryid,jdbcType=TINYINT},
+      subjectid = #{subjectid,jdbcType=TINYINT},
+      chapterid = #{chapterid,jdbcType=CHAR},
+      status = #{status,jdbcType=TINYINT},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      browse = #{browse,jdbcType=INTEGER},
+      sort_no = #{sortNo,jdbcType=SMALLINT},
+      kind = #{kind,jdbcType=TINYINT},
+      analysis = #{analysis,jdbcType=VARCHAR},
+      brief = #{brief,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
