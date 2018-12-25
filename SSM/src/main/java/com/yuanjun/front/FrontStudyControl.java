@@ -68,6 +68,7 @@ public class FrontStudyControl {
 	  	   }else {
 	  		  message.setCode("0"); 
 	  		  message.setMsg("该用户不存在");
+	  		  message.setData(data);
 	  		  return  message ;
 	  	   }
 		return message ;
@@ -97,6 +98,7 @@ public class FrontStudyControl {
     	    // 判断flag
     	    ssmQuestionStudyCriteria.andFlagEqualTo((byte)1);
     	    ssmQuestionStudyCriteria.andKindEqualTo((byte)2);//'1已掌握，2未掌握'  只显示未掌握的
+    	    ssmQuestionStudyCriteria.andStatusEqualTo((byte)2);
     	    long sumCount  =  ssmQuestionStudyService.countByExample(ssmQuestionStudyExample);
     	    
     	    int sumPage =    (int) Math.ceil(Double.valueOf(sumCount)/pageSize)    ;  			    	    
@@ -120,8 +122,12 @@ public class FrontStudyControl {
 				 message.setSumPage(String.valueOf(sumPage));
 				 message.setData(data);
     	    }else {
-    	    	 message.setCode("0");
+    	    	 message.setCurrPage(String.valueOf(currPage));
+				 message.setSumPage(String.valueOf(sumPage));
+    	    	 message.setCode("1");
 				 message.setMsg("查询不到数据");
+				 message.setData(data);
+				 
     	    }
 		return message ;
 	}
@@ -134,7 +140,9 @@ public class FrontStudyControl {
 			@RequestParam(value="category_pid" ,defaultValue="") String category_pid,
 			@RequestParam(value="category_id") String category_id,			
 			@RequestParam(value="userid") String userid,
-			@RequestParam(value="ansers") String ansers
+			@RequestParam(value="ansers") String ansers,
+			@RequestParam(value="kind") String kind,
+			@RequestParam(value="status") String status
 			
 			) {		
 		    Message message = new Message();
@@ -143,7 +151,9 @@ public class FrontStudyControl {
 		    questionStudyModel.setUserid(userid);
 		    questionStudyModel.setCategoryid(category_id);
 		    questionStudyModel.setCategorypid(category_pid);
-		    questionStudyModel.setAnserList(anserList);
+		    questionStudyModel.setKind(kind);
+		    questionStudyModel.setStatus(status);
+		    questionStudyModel.setAnserList(anserList);		    
 		    int index = ssmQuestionStudyService.saveStudyAll(questionStudyModel);
 		    
 		    if(index>0) {

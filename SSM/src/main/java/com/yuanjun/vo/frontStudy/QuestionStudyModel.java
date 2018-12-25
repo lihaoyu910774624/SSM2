@@ -7,7 +7,23 @@ public class QuestionStudyModel {
 	private String  userid ;
   private String	categorypid ;
   private String   categoryid ;
-  private List<AnserDto> anserList ;
+  private String kind ;
+  private String status ;
+  
+  
+  public String getKind() {
+	return kind;
+}
+public void setKind(String kind) {
+	this.kind = kind;
+}
+public String getStatus() {
+	return status;
+}
+public void setStatus(String status) {
+	this.status = status;
+}
+private List<AnserDto> anserList ;
 public String getUserid() {
 	return userid;
 }

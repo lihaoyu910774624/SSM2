@@ -295,10 +295,10 @@ public class FrontQuestionControl {
 					    		}
 	    	}else {
 	    		
-				String[] arrMyanser = myanser.split(",");
+				String[] arrMyanser = myanser.split("");
 				Arrays.sort(arrMyanser);
 				String correctanswer = ssmQuestion.getCorrectanswer();
-				String[] arrCorrectanswer = correctanswer.split(",");
+				String[] arrCorrectanswer = correctanswer.split("");
 				Arrays.sort(arrCorrectanswer);
 				Boolean isRight = Arrays.equals(arrMyanser, arrCorrectanswer);
 	    	    if(isRight) {

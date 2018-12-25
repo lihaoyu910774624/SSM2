@@ -50,6 +50,7 @@
 			WHERE
 			A.flag =1 
 			and  A.kind=2
+			and  A.status=2
 			and A.userid = #{userid}
 			
 			and A.categoryid= #{category_id}
@@ -58,25 +59,27 @@
    
    </select>
 	<select id="getCategoryTitle" resultType="com.yuanjun.vo.frontStudy.StudyTitleVo">
-		SELECT
-		a.categoryid categoryid ,b.title title
-		FROM
-		ssm_question_study a
-		LEFT JOIN ssm_category b ON a.categoryid = b.id
-		WHERE a.flag =1
-		AND  a.kind =2
-		AND a.userid = #{userid}
+
+
+	SELECT
+	a.categoryid categoryid ,b.title title
+	FROM
+	(SELECT categoryid from ssm_question_study where flag=1 and kind=2 and
+	status=2 and userid=#{userid} group by categoryid) a
+	LEFT JOIN ssm_category b ON a.categoryid = b.id
   
     </select>
     
    <!-- 批量保存 -->
     <insert id="saveStudyAll" parameterType="com.yuanjun.vo.frontStudy.QuestionStudyModel">
-        INSERT into  ssm_question_study  (userid,categorypid,categoryid,questionid,myanser ) VALUES
+        INSERT into  ssm_question_study  (userid,categorypid,categoryid,kind,status questionid,myanser ) VALUES
      <foreach collection="questionStudyModel.anserList" index="index" item="item" separator=",">
         (
           #{questionStudyModel.userid},
           #{questionStudyModel.categorypid},
-          #{questionStudyModel.categoryid},         
+          #{questionStudyModel.categoryid},
+          #{questionStudyModel.kind},
+          #{questionStudyModel.status},         
           #{item.questionid},
           #{item.myanser}
         )
@@ -85,6 +88,8 @@
         userid=values(userid),
         categorypid=values(categorypid),
         categoryid=values(categoryid),
+        kind=values(kind),
+        status=values(status),
         questionid=values(questionid),
         myanser=values(myanser)
     </insert>
