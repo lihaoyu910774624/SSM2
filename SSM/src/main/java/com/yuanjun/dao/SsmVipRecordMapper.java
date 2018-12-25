@@ -11,8 +11,9 @@ import org.apache.ibatis.annotations.Param;
 
 public interface SsmVipRecordMapper {
 	VipRecordDto getVipRecordByOutTradeNo(@Param("out_trade_no") String out_trade_no );
-	 List<VipRecordVo>  getVipRecord(@Param("phone") String phone );
+	 List<VipRecordVo>  getVipRecord(@Param("phone") String phone ,@Param("start") Integer start ,@Param("end") Integer end );
 	RecordVo   getByUserId(@Param("userId") String userId ) ;
+	long  countByPhone(@Param("phone") String phone);
     long countByExample(SsmVipRecordExample example);
 
     int deleteByExample(SsmVipRecordExample example);

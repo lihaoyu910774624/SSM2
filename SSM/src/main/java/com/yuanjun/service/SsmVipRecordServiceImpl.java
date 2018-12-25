@@ -70,11 +70,7 @@ public class SsmVipRecordServiceImpl implements SsmVipRecordService {
 		return ssmVipRecordMapper.getByUserId(userId);
 	}
 
-	@Override
-	public List<VipRecordVo> getVipRecord(String phone) {
-		
-		return ssmVipRecordMapper.getVipRecord(phone);
-	}
+	
 
 	@Override
 	public int updateByPrimaryKey(SsmVipRecord record) {
@@ -92,6 +88,18 @@ public class SsmVipRecordServiceImpl implements SsmVipRecordService {
 	public VipRecordDto getVipRecordByOutTradeNo(String out_trade_no) {
 		
 		return ssmVipRecordMapper.getVipRecordByOutTradeNo(out_trade_no);
+	}
+
+	@Override
+	public List<VipRecordVo> getVipRecord(String phone, Integer start, Integer end) {
+		
+		return ssmVipRecordMapper.getVipRecord(phone, start, end);
+	}
+
+	@Override
+	public long countByPhone(String phone) {
+		
+		return ssmVipRecordMapper.countByPhone(phone);
 	}
 
 }

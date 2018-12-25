@@ -43,20 +43,32 @@
   
   <select id="getVipRecord"  resultType="com.yuanjun.comm.viprecord.VipRecordVo">
       select 
-		A.out_trade_no,
-		A.total_fee,
-		A.exprietime,
-		A.paytime,
-		B.title,
-		C.phone,
+		A.out_trade_no outTradeNo,
+		A.total_fee totalFee,
+		A.exprietime exprietime,
+		A.paytime paytime,
+		B.title title,
+		C.phone phone ,
 		D.title as categoryTitle
 		from ssm_vip_record as A 
 		left join ssm_vip_product as B on A.product_id = B.product_id
 		left join ssm_user as C on A.user_id=C.userid 
 		left join ssm_category as D on A.categoryid = D.id
-		where A.flag=1 and C.phone    LIKE  CONCAT('%',#{phone},'%')    
-    
-    
+		where A.flag=1 
+		<if test="phone !=null and phone != ''">
+		   and C.phone    LIKE  CONCAT('%',#{phone},'%')    
+		</if>
+		ORDER BY A.addtime
+		limit #{start},#{end}
+  </select>
+  
+  <select id="countByPhone" resultType="java.lang.Long" >
+     select count(*) from ssm_vip_record as A
+     left join ssm_user as C on A.user_id=C.userid 
+     where A.flag=1 
+		<if test="phone !=null and phone != ''">
+		   and C.phone    LIKE  CONCAT('%',#{phone},'%')    
+		</if>
   </select>
   
   

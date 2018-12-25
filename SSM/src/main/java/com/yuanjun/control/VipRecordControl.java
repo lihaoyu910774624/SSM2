@@ -1,6 +1,8 @@
 package com.yuanjun.control;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +31,52 @@ public class VipRecordControl {
 	
 	@RequestMapping(value = "/getVipRecord",method=RequestMethod.POST)
 	@ResponseBody	
-	public VipRecordListMessage getVipRecord (@RequestParam(value="phone") String phone) {
+	public VipRecordListMessage getVipRecord (@RequestParam(value="phone",defaultValue="") String phone,
+			@RequestParam(value="currPage", required=false, defaultValue="1") String currPage, 
+	        @RequestParam(value="pageSize", required=false, defaultValue="10") String pageSize 
+			) {
 		VipRecordListMessage vipRecordListMessage  = new VipRecordListMessage ();
-		List<VipRecordVo> list = new ArrayList<VipRecordVo>();
-		list = ssmVipRecordService.getVipRecord(phone);
+		List<VipRecordVo> list = new ArrayList<VipRecordVo>();//数据库查询接收对象
+		List<VipRecordVo> data = new ArrayList<VipRecordVo>();// 返回对象
+		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		long sumCount ;
+		int start = (Integer.valueOf(currPage).intValue() - 1) * Integer.valueOf(pageSize).intValue();
+
+	    int end = Integer.valueOf(currPage).intValue() * Integer.valueOf(pageSize).intValue();
+	    
+	   
+	    if(phone!=null&&!"".equals(phone)) {
+	    	
+	    	sumCount = ssmVipRecordService.countByPhone(phone);
+	    	
+	    }else {
+	    	SsmVipRecordExample ssmVipRecordExample = new SsmVipRecordExample ();
+	 	    SsmVipRecordExample.Criteria ssmVipRecordExampleCriteria = ssmVipRecordExample.createCriteria();
+	 	    ssmVipRecordExampleCriteria.andFlagEqualTo(Byte.valueOf("1"));
+	 	   sumCount = ssmVipRecordService.countByExample(ssmVipRecordExample);
+	    }
+	    int sumPage = (int)Math.ceil(Double.valueOf(sumCount).doubleValue() / Integer.valueOf(pageSize).intValue());
+		list = ssmVipRecordService.getVipRecord(phone, start, end);
 		
 		if(list!=null&&list.size()>0)
-		{
+		{    
+			for(int i=0;i<list.size();i++) {
+				VipRecordVo vipRecordVo = new VipRecordVo ();
+				vipRecordVo = list.get(i);
+				if(vipRecordVo!=null&&vipRecordVo.getExprietime()!=null&vipRecordVo.getPaytime()!=null)
+				{
+					Date date = new Date(Long.valueOf(vipRecordVo.getExprietime())*1000L);
+					vipRecordVo.setExprietime(sd.format(date));  
+				}
+				data.add(vipRecordVo);
+			}
+			
+			
 			vipRecordListMessage.setCode("1");
 			vipRecordListMessage.setMsg("数据查询成功");
-			vipRecordListMessage.setList(list);
+			vipRecordListMessage.setCurrPage(currPage);
+			vipRecordListMessage.setSumPage(String.valueOf(sumPage));
+			vipRecordListMessage.setData(data);
 		}else {
 			
 			vipRecordListMessage.setCode("0");

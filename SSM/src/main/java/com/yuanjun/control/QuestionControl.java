@@ -356,7 +356,10 @@ public class QuestionControl
   @Transactional
   @RequestMapping(value={"/findAll"}, method={org.springframework.web.bind.annotation.RequestMethod.POST})
   @ResponseBody
-  public QuestionDtoMessage getAll(@RequestParam("adminId") String adminId, @RequestParam("category_pid") String category_pid, @RequestParam("category_id") String category_id, @RequestParam("chapter_id") String chapter_id, @RequestParam(value="currPage", required=false, defaultValue="1") String currPage, @RequestParam(value="pageSize", required=false, defaultValue="10") String pageSize, @RequestParam("title") String title, @RequestParam("kind") String kind)
+  public QuestionDtoMessage getAll(@RequestParam("adminId") String adminId, @RequestParam("category_pid") String category_pid, @RequestParam("category_id") String category_id, @RequestParam("chapter_id") String chapter_id, 
+		  @RequestParam(value="currPage", required=false, defaultValue="1") String currPage, 
+          @RequestParam(value="pageSize", required=false, defaultValue="10") String pageSize, 
+          @RequestParam("title") String title, @RequestParam("kind") String kind)
   {
     QuestionDtoMessage vo = new QuestionDtoMessage();
     List data = new ArrayList();

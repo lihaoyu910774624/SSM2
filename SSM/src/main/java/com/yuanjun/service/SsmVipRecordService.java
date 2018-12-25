@@ -11,12 +11,13 @@ import com.yuanjun.comm.viprecord.VipRecordVo;
 import com.yuanjun.vo.frontRecord.RecordVo;
 
 public interface SsmVipRecordService {
+	   long  countByPhone( String phone);
 	   VipRecordDto getVipRecordByOutTradeNo( String out_trade_no );
 		int updateByPrimaryKey(SsmVipRecord record);
 	
 	    int updateByExampleSelective( SsmVipRecord record,  SsmVipRecordExample example);
 
-	   List<VipRecordVo>  getVipRecord( String phone );
+	   List<VipRecordVo>  getVipRecord( String phone , Integer start , Integer end );
 
 	   RecordVo   getByUserId( String userId ) ;
 	

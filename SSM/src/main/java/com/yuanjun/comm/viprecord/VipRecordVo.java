@@ -1,12 +1,14 @@
 package com.yuanjun.comm.viprecord;
 
+import java.util.Date;
+
 public class VipRecordVo {
 
 	
 	private String outTradeNo;
 	private String totalFee;
 	private String exprietime;
-	private String 	paytime;
+	private Date 	paytime;
 	private String  title;
 	private String 	phone;
 	private String  categoryTitle;
@@ -29,10 +31,11 @@ public class VipRecordVo {
 	public void setExprietime(String exprietime) {
 		this.exprietime = exprietime;
 	}
-	public String getPaytime() {
+	
+	public Date getPaytime() {
 		return paytime;
 	}
-	public void setPaytime(String paytime) {
+	public void setPaytime(Date paytime) {
 		this.paytime = paytime;
 	}
 	public String getTitle() {

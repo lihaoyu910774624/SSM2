@@ -6,8 +6,25 @@ public class VipRecordListMessage {
 	
 	private String code ;
 	private String msg ;
-	List<VipRecordVo> list ;
+	private String currPage ;
+	private String sumPage;
 	
+	List<VipRecordVo> data ;
+	
+	
+	
+	public String getCurrPage() {
+		return currPage;
+	}
+	public void setCurrPage(String currPage) {
+		this.currPage = currPage;
+	}
+	public String getSumPage() {
+		return sumPage;
+	}
+	public void setSumPage(String sumPage) {
+		this.sumPage = sumPage;
+	}
 	public String getCode() {
 		return code;
 	}
@@ -20,12 +37,13 @@ public class VipRecordListMessage {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-	public List<VipRecordVo> getList() {
-		return list;
+	public List<VipRecordVo> getData() {
+		return data;
 	}
-	public void setList(List<VipRecordVo> list) {
-		this.list = list;
+	public void setData(List<VipRecordVo> data) {
+		this.data = data;
 	}
+	
 	
 	
 	
