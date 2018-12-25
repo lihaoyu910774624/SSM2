@@ -10,8 +10,11 @@ import com.yuanjun.comm.Message;
 import com.yuanjun.service.SsmArticleService;
 import com.yuanjun.service.SsmCategoryService;
 import com.yuanjun.vo.ArticlInfo;
+import com.yuanjun.vo.articlvo.ArticleAllListMessage;
 import com.yuanjun.vo.articlvo.ArticleTitleIdList;
 import com.yuanjun.vo.articlvo.ArticleTitleIdListMessage;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -231,23 +234,76 @@ public class ArticleControl
 
   @RequestMapping(value={"/getFive"}, method={org.springframework.web.bind.annotation.RequestMethod.POST})
   @ResponseBody
-  public ArticleTitleIdListMessage getArticleTopFive(@RequestParam("adminId") String adminId, @RequestParam(value="userid", required=true) String userid) {
+  public ArticleTitleIdListMessage getArticleTopFive(
+		  @RequestParam(value="userid", required=true) String userid) {
     ArticleTitleIdListMessage message = new ArticleTitleIdListMessage();
     ArticleTitleIdList data = new ArticleTitleIdList();
-    Boolean isAdmin = this.util.isAdmin(adminId);
+    /*Boolean isAdmin = this.util.isAdmin(adminId);
     if (!isAdmin.booleanValue()) {
       message.setCode("0");
       message.setMsg("0");
       return message;
-    }
-
+    }*/
+      
     List zhongjieList = this.ssmArticleService.getFive("1");
     List shouxianList = this.ssmArticleService.getFive("2");
     List chanxianList = this.ssmArticleService.getFive("3");
-    data.setZhongjieList(zhongjieList);
-    data.setShouxianList(shouxianList);
-    data.setChanxianList(chanxianList);
+    if(zhongjieList!=null&& shouxianList!=null && chanxianList!=null) {
+    	data.setZhongjieList(zhongjieList);
+    	data.setShouxianList(shouxianList);       
+        data.setChanxianList(chanxianList);
+        message.setCode("1");
+        message.setMsg("成功获取信息");
+        message.setData(data);
+    }else {
+    	message.setCode("0");
+        message.setMsg("数据获取失败");
+    }
+    
+    return message;
+  }
   
+  @RequestMapping(value={"/getTitleAll"}, method={org.springframework.web.bind.annotation.RequestMethod.POST})
+  @ResponseBody
+  public ArticleAllListMessage getArticleTitleAll(@RequestParam(value="userid", defaultValue="") String userid, @RequestParam(value="categoryPid", required=true) String categoryPid)
+  {
+    ArticleAllListMessage message = new ArticleAllListMessage();
+    List data = new ArrayList();
+
+    data = this.ssmArticleService.getTitleAll(categoryPid);
+    message.setData(data);
+    message.setCode("1");
+    message.setMsg("数据获取成功");
+    return message;
+  }
+
+  @RequestMapping(value={"/findArticleById"}, method={org.springframework.web.bind.annotation.RequestMethod.POST})
+  @ResponseBody
+  public MapMessage findArticleById(@RequestParam(value="id", required=true) String id) {
+    MapMessage message = new MapMessage();
+    Map data = new HashMap();
+
+    SsmArticle info = this.ssmArticleService.selectByPrimaryKey(Integer.valueOf(id));
+    data.put("id", String.valueOf(info.getId()));
+    data.put("title", info.getTitle());
+    data.put("content", info.getContent());
+    data.put("browser", String.valueOf(info.getBrowser()));
+    data.put("addtime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(info.getAddtime()));
+    message.setCode("1");
+    message.setMsg("数据查询成功");
+    message.setData(data);
+
+    long browser = info.getBrowser().longValue() + 1L;
+    info.setBrowser(Long.valueOf(browser));
+    this.ssmArticleService.updateByPrimaryKeySelective(info);
+    data.put("id", String.valueOf(info.getId()));
+    data.put("title", info.getTitle());
+    data.put("content", info.getContent());
+    data.put("browser", String.valueOf(info.getBrowser()));
+    data.put("addtime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(info.getAddtime()));
+    message.setCode("1");
+    message.setMsg("数据查询成功");
+    message.setData(data);
     return message;
   }
 }

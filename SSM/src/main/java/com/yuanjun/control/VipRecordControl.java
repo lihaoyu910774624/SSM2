@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.yuanjun.bean.SsmVipRecord;
 import com.yuanjun.bean.SsmVipRecordExample;
+import com.yuanjun.comm.AdminUtil;
 import com.yuanjun.comm.Message;
 import com.yuanjun.comm.viprecord.VipRecordDto;
 import com.yuanjun.comm.viprecord.VipRecordDtoMessage;
@@ -28,14 +29,25 @@ import com.yuanjun.service.SsmVipRecordService;
 public class VipRecordControl {
 	@Autowired
 	private SsmVipRecordService ssmVipRecordService ;
+	@Autowired
+	private AdminUtil util;
 	
 	@RequestMapping(value = "/getVipRecord",method=RequestMethod.POST)
 	@ResponseBody	
 	public VipRecordListMessage getVipRecord (@RequestParam(value="phone",defaultValue="") String phone,
+			@RequestParam(value="adminId") String adminId	,
 			@RequestParam(value="currPage", required=false, defaultValue="1") String currPage, 
 	        @RequestParam(value="pageSize", required=false, defaultValue="10") String pageSize 
 			) {
 		VipRecordListMessage vipRecordListMessage  = new VipRecordListMessage ();
+		
+		Boolean isAdmin =   util.isAdmin(adminId);
+		if(!isAdmin) {			
+			vipRecordListMessage.setCode("0");
+			vipRecordListMessage.setMsg("0");
+			return vipRecordListMessage ;
+		}	
+		
 		List<VipRecordVo> list = new ArrayList<VipRecordVo>();//数据库查询接收对象
 		List<VipRecordVo> data = new ArrayList<VipRecordVo>();// 返回对象
 		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -89,10 +101,16 @@ public class VipRecordControl {
 	@RequestMapping(value = "/deleteVipRecord",method=RequestMethod.POST)
 	@ResponseBody	
 	public Message deleteVipRecord (
-			@RequestParam(value="outTradeNo") String outTradeNo
+			@RequestParam(value="outTradeNo") String outTradeNo,
+			@RequestParam(value="adminId") String adminId	
 			) {
 		Message message = new Message();
-		
+		Boolean isAdmin =   util.isAdmin(adminId);
+		if(!isAdmin) {			
+			message.setCode("0");
+			message.setMsg("0");
+			return message ;
+		}	
 		SsmVipRecordExample ssmVipRecordExample = new SsmVipRecordExample();
 		SsmVipRecordExample.Criteria  ssmVipRecordExampleCriteria =  ssmVipRecordExample.createCriteria();
 		ssmVipRecordExampleCriteria.andFlagEqualTo((byte)1);

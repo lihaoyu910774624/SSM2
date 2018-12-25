@@ -19,7 +19,7 @@ public interface SsmVipRecordService {
 
 	   List<VipRecordVo>  getVipRecord( String phone , Integer start , Integer end );
 
-	   RecordVo   getByUserId( String userId ) ;
+	   List<RecordVo>   getByUserId( String userId ) ;
 	
 	   long countByExample(SsmVipRecordExample example);
 

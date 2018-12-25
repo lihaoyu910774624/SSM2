@@ -64,11 +64,7 @@ public class SsmVipRecordServiceImpl implements SsmVipRecordService {
 		return ssmVipRecordMapper.updateByPrimaryKeySelective(record);
 	}
 
-	@Override
-	public RecordVo getByUserId(String userId) {
-		
-		return ssmVipRecordMapper.getByUserId(userId);
-	}
+	
 
 	
 
@@ -100,6 +96,12 @@ public class SsmVipRecordServiceImpl implements SsmVipRecordService {
 	public long countByPhone(String phone) {
 		
 		return ssmVipRecordMapper.countByPhone(phone);
+	}
+
+	@Override
+	public List<RecordVo> getByUserId(String userId) {
+		
+		return ssmVipRecordMapper.getByUserId(userId);
 	}
 
 }

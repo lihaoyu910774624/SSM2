@@ -112,21 +112,43 @@ public class ManageUserControl {
 	@RequestMapping(value = "/updateUser",method=RequestMethod.POST)
 	@ResponseBody	
 	public Message updateUser(
-			@RequestParam(value="adminId") String adminId,
+			@RequestParam(value="adminId",defaultValue="1") String adminId,
 			@RequestParam(value="userid") String userid,
 			@RequestParam(value="categoryid") String categoryid ,
 			@RequestParam(value="cityid") String cityid,
 			@RequestParam(value="phone") String phone,
 			@RequestParam(value="name") String name,
-			@RequestParam(value="password") String password
+			@RequestParam(value="password") String password,
+			@RequestParam(value="type",defaultValue="3") String type
 			) {
 		Message reMsg = new Message();
-		Boolean isAdmin =   util.isAdmin(adminId);
-		if(!isAdmin) {			
-			reMsg.setCode("0");
-			reMsg.setMsg("0");
-			return reMsg ;
+		
+		
+		if("1".equals(type)) {
+			
+			Boolean isAdmin =   util.isAdmin(adminId);
+			if(!isAdmin) {			
+				reMsg.setCode("0");
+				reMsg.setMsg("0");
+				return reMsg ;
+			}
+			
+		}else if("2".equals(type)) {
+				       List<SsmUser>	ssmUserList =  ssmUserService.selectByPrimaryKey(userid);
+				       if(ssmUserList!=null&&ssmUserList.size()>0) {
+				    	   
+				       }else {
+				    	    reMsg.setCode("0");
+							reMsg.setMsg("用户id不正确");
+							return reMsg ; 
+				    	   
+				       }
+	}else {
+			    reMsg.setCode("0");
+				reMsg.setMsg("type传值不正确");
+				return reMsg ; 
 		}
+		
 		
 				Boolean isPhone =   PhoneVadation.isPhone(phone);
 				if(!isPhone) {					
@@ -174,10 +196,10 @@ public class ManageUserControl {
 		int index = ssmUserService.updateByPrimaryKeySelective(ssmUser);
 		if(index>0) {
 			reMsg.setCode("1");
-			reMsg.setMsg("成功");
+			reMsg.setMsg("资料更新成功");
 		}else {
 			reMsg.setCode("0");
-			reMsg.setMsg("失败");					
+			reMsg.setMsg("资料更新失败");					
 			return reMsg;
 		}
 		return reMsg ;
