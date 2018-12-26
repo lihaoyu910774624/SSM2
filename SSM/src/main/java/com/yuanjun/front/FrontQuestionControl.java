@@ -3,6 +3,7 @@ package com.yuanjun.front;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,22 +13,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.yuanjun.bean.SsmQuestion;
 import com.yuanjun.bean.SsmQuestionExample;
 import com.yuanjun.bean.SsmQuestionStudy;
 import com.yuanjun.bean.SsmQuestionStudyExample;
+import com.yuanjun.bean.SsmSimulate;
+import com.yuanjun.bean.SsmSimulateExample;
+import com.yuanjun.bean.SsmSimulateQuestion;
 import com.yuanjun.bean.SsmVipRecord;
 import com.yuanjun.bean.SsmVipRecordExample;
 import com.yuanjun.comm.Message;
 import com.yuanjun.service.SsmQuestionOptionService;
 import com.yuanjun.service.SsmQuestionService;
 import com.yuanjun.service.SsmQuestionStudyService;
+import com.yuanjun.service.SsmSimulateQuestionService;
+import com.yuanjun.service.SsmSimulateService;
 import com.yuanjun.service.SsmUserService;
 import com.yuanjun.service.SsmVipRecordService;
 import com.yuanjun.vo.UserInfo;
 import com.yuanjun.vo.FrontQuestion.TrainingOption;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestion;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestionListMessage;
+import com.yuanjun.vo.simulate.MyanserSimulate;
 import com.yuanjun.vo.simulate.SimulateQuestion;
 import com.yuanjun.vo.simulate.SimulateQuestionListMessage;
 import com.yuanjun.vo.simulate.SimulateVo;
@@ -36,6 +44,10 @@ import com.yuanjun.vo.simulate.SimulateVo;
 @RequestMapping("/FrontQuestion")
 @CrossOrigin
 public class FrontQuestionControl {
+	@Autowired
+	private  SsmSimulateQuestionService  ssmSimulateQuestionService;
+	@Autowired
+	private SsmSimulateService ssmSimulateService ;
 	@Autowired
 	private   SsmQuestionStudyService ssmQuestionStudyService ;
 	@Autowired
@@ -139,7 +151,7 @@ public class FrontQuestionControl {
 			    	
 			    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
 			    	long exprietime = ssmVipRecord.getExprietime();
-			    	long now = (int)System.currentTimeMillis()/1000;
+			    	long now = System.currentTimeMillis()/1000;
 			    	if(now<exprietime) {
 			    		// vip 还在有效期内  显示所有题的内容
 			    		int start = (currPage - 1) * pageSize;
@@ -182,11 +194,11 @@ public class FrontQuestionControl {
 			    		
 			    	}else {
 
-			    	    long danxuan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 1);
+			    	    long danxuan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 1);
 			    	    
-			    	    long duoxuan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 2);
+			    	    long duoxuan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 2);
 			    	  
-			    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 3);
+			    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 3);
 			    		// vip 过期  至显示免费题目
 			    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 14,userid);
 			    		 if (data != null && data.size() > 0) {
@@ -218,11 +230,11 @@ public class FrontQuestionControl {
 			    		
 			    	}
 			    } else {
-		    	    long danxuan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 1);
+		    	    long danxuan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 1);
 		    	    
-		    	    long duoxuan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 2);
+		    	    long duoxuan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 2);
 		    	  
-		    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 3);
+		    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 3);
 		    		// 没有查找到购买记录  显示免费题目
 		    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 14,userid);
 					 message.setCode("1");
@@ -241,11 +253,12 @@ public class FrontQuestionControl {
 	}
 	
 	
-	@RequestMapping(value="/simulateQuestion", method=RequestMethod.POST)
+	@RequestMapping(value="/getSimulateQuestion", method=RequestMethod.POST)
 	@ResponseBody 
 	public SimulateQuestionListMessage simulateQuestion(
 			@RequestParam(value="userid") String userid,			
-			@RequestParam(value="category_pid") String category_pid
+			@RequestParam(value="category_pid") String category_pid,
+			@RequestParam(value="category_id") String category_id
 				
 			) {
 		SimulateQuestionListMessage message = new SimulateQuestionListMessage();
@@ -284,32 +297,50 @@ public class FrontQuestionControl {
 				message.setMsg("0");			
 				return message ;
 			}
+			
+			SsmSimulate ssmSimulate = new SsmSimulate ();
+			String simulateid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+		    long  startTime = System.currentTimeMillis()/1000;	       // 考试起始时间
+		    long  endTime = startTime+1000*60*70;// 70分钟后考试时间结束
+			ssmSimulate.setUserid(userid);
+			ssmSimulate.setSimulateid(simulateid);
+			ssmSimulate.setStartTime((int)startTime);
+			ssmSimulate.setEndTime((int)endTime);
+			ssmSimulateService.insertSelective(ssmSimulate);
+			
+			// 将数据放入返回值总
+			message.setSimulateid(simulateid);
+			message.setStartTime(startTime);
+			message.setEndTime(endTime);
+			
 		//按分类出题 判断用户是否为当前分类的付费用户
 			SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
 			SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
 			ssmVipRecordCriteria.andFlagEqualTo((byte)1);			
 			ssmVipRecordCriteria.andCategorypidEqualTo(Integer.valueOf(category_pid));
+			ssmVipRecordCriteria.andCategoryidEqualTo(Integer.valueOf(category_id));
 			ssmVipRecordCriteria.andUserIdEqualTo(userid);
 			List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
 			    if(ssmVipRecordList!=null&&ssmVipRecordList.size()>0) {			    	
 			    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
 			    	long exprietime = ssmVipRecord.getExprietime();
-			    	long now = (int)System.currentTimeMillis()/1000;
+			    	long now = System.currentTimeMillis()/1000;
 			    	if(now<exprietime) {
 			    		// vip 还在有效期内  显示所有题的内容
 			    		//付费 			    		
 			    		// 单选40题
-			    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateDanxuan(userid, category_pid);
+			    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateDanxuan(userid,category_id, category_pid);
 			    		// 多选 15题
-			    		List<SimulateQuestion> duoxuan = ssmQuestionService.getSimulateDuoxuan(userid, category_pid);
+			    		List<SimulateQuestion> duoxuan = ssmQuestionService.getSimulateDuoxuan(userid, category_id,category_pid);
 			    		// 判断30题			    		
-			    		List<SimulateQuestion> panduan = ssmQuestionService.getSimulatePanduan(userid, category_pid);
+			    		List<SimulateQuestion> panduan = ssmQuestionService.getSimulatePanduan(userid, category_id,category_pid);
 			    		vo.setDanxuan(danxuan);
 			    		vo.setDuoxuan(duoxuan);
 			    		vo.setPanduan(panduan);
+			    		message.setData(vo);
 			    		
 			    	}else {
-			    		// vip 过期显示免费的题 标志物是免费的题  
+			    		/*// vip 过期显示免费的题 标志物是免费的题  
 			    		// 单选
 			    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "1");
 			    		// 多选 
@@ -318,14 +349,15 @@ public class FrontQuestionControl {
 			    		List<SimulateQuestion> panduan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "3");
 			    		vo.setDanxuan(danxuan);
 			    		vo.setDuoxuan(duoxuan);
-			    		vo.setPanduan(panduan);
-			    		message.setCode("1");
-						message.setMsg("成功");			
+			    		vo.setPanduan(panduan);*/
+			    		//message.setData(vo);
+			    		message.setCode("0");
+						message.setMsg("0");			
 						return message ;
 			    		
 			    	}
 			    }else {
-			    	//没有付费则返回免费15题
+			    	/*//没有付费则返回免费15题
 			    	// 单选
 		    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "1");
 		    		// 多选 
@@ -335,8 +367,9 @@ public class FrontQuestionControl {
 		    		vo.setDanxuan(danxuan);
 		    		vo.setDuoxuan(duoxuan);
 		    		vo.setPanduan(panduan);
-		    		message.setCode("1");
-					message.setMsg("成功");			
+		    		message.setData(vo);*/
+		    		message.setCode("0");
+					message.setMsg("0");			
 					return message ;
 			    	
 			    }
@@ -347,7 +380,78 @@ public class FrontQuestionControl {
 	
 	
 	
-	
+	@RequestMapping(value="/saveSimulateQuestion", method=RequestMethod.POST)
+	@ResponseBody 
+	public Message saveSimulateQuestion(
+			@RequestParam(value="userid") String userid,
+			@RequestParam(value="simulateid")  String simulateid ,
+			@RequestParam(value="myanser") String myanser,
+			@RequestParam(value="category_pid") String category_pid,
+			@RequestParam(value="category_id") String category_id
+			) {		
+		  Message message = new Message ();
+		//解析 myanser 100条记录
+		List<MyanserSimulate> myanserSimulateList = JSON.parseArray(myanser, MyanserSimulate.class);
+		
+		
+		//校验是否为合法用户 
+				UserInfo user    =ssmUserService.getUserInfoById(userid);	
+					if(user==null) {
+						message.setCode("0");
+						message.setMsg("0");			
+						return message ;
+					}
+					SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+					SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
+					ssmVipRecordCriteria.andFlagEqualTo((byte)1);
+					ssmVipRecordCriteria.andCategorypidEqualTo(Integer.valueOf(category_pid));
+					ssmVipRecordCriteria.andCategoryidEqualTo(Integer.valueOf(category_id));
+					ssmVipRecordCriteria.andUserIdEqualTo(userid);
+					List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
+					    if(ssmVipRecordList!=null&&ssmVipRecordList.size()>0) {	
+					    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
+					    	long exprietime = ssmVipRecord.getExprietime();
+					    	long now = System.currentTimeMillis()/1000;
+					    	int sumScore = 0;//记录得分总数
+					    	if(now<exprietime) {
+					    		// 循环保存100条记录
+					    		for(int i=0;i<myanserSimulateList.size();i++) {
+					    			MyanserSimulate anser= myanserSimulateList.get(i);
+					    			SsmSimulateQuestion simulate = new SsmSimulateQuestion();
+					    			simulate.setSimulateid(simulateid);
+					    			simulate.setQuestionid(anser.getQuestionid());
+					    			simulate.setMyanswer(anser.getMyanser());
+					    			simulate.setScore((byte)anser.getScore());
+					    			simulate.setFlag((byte)1);
+					    			ssmSimulateQuestionService.insertSelective(simulate);
+					    			sumScore=sumScore+anser.getScore();
+					    		}
+					    		
+					    		// 添加更新ssm_simulate 分数
+					    		SsmSimulateExample ssmSimulateExample = new SsmSimulateExample();
+					    		SsmSimulateExample.Criteria ssmSimulateExampleCriteria = ssmSimulateExample.createCriteria();
+					    		ssmSimulateExampleCriteria.andFlagEqualTo((byte)1);
+					    		ssmSimulateExampleCriteria.andSimulateidEqualTo(simulateid);
+					    		SsmSimulate ssmSimulate = new SsmSimulate();
+					    		ssmSimulate.setScore(sumScore);
+					    		ssmSimulateService.updateByExampleSelective(ssmSimulate, ssmSimulateExample);
+					    	}else {
+					    		message.setCode("0");
+								message.setMsg("0");			
+								return message ;
+					    	}
+					    	
+					    }else {
+					    	message.setCode("0");
+							message.setMsg("0");			
+							return message ;
+					    }	    		
+					
+		
+		message.setCode("1");
+		message.setMsg("保存成功");
+		return message ;
+	}
 	
 	
 	

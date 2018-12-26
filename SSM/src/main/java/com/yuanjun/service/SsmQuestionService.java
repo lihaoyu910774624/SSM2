@@ -11,11 +11,11 @@ import com.yuanjun.vo.question.QuestionDto;
 import com.yuanjun.vo.simulate.SimulateQuestion;
 
 public interface SsmQuestionService {
-	List<SimulateQuestion> getSimulateDanxuan(String userid, String category_pid);
+	List<SimulateQuestion> getSimulateDanxuan(String userid,String category_id, String category_pid);
 
-	List<SimulateQuestion> getSimulateDuoxuan(String userid, String category_pid);
+	List<SimulateQuestion> getSimulateDuoxuan(String userid,String category_id, String category_pid);
 
-	List<SimulateQuestion> getSimulatePanduan(String userid, String category_pid);
+	List<SimulateQuestion> getSimulatePanduan(String userid,String category_id, String category_pid);
 
 	List<SimulateQuestion> getSimulateQuestionFree(String userid, String category_pid, String type);
 	

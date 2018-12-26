@@ -11,10 +11,13 @@ import org.apache.ibatis.annotations.Param;
 
 public interface SsmQuestionMapper {
 	List<SimulateQuestion> getSimulateDanxuan(@Param("userid") String userid,
+			@Param("category_id") String category_id,
 			@Param("category_pid") String category_pid);
 	List<SimulateQuestion> getSimulateDuoxuan(@Param("userid") String userid,
+			@Param("category_id") String category_id,
 			@Param("category_pid") String category_pid);
 	List<SimulateQuestion> getSimulatePanduan(@Param("userid") String userid,
+			@Param("category_id") String category_id,
 			@Param("category_pid") String category_pid);
 	List<SimulateQuestion>    getSimulateQuestionFree(
 			@Param("userid") String userid,

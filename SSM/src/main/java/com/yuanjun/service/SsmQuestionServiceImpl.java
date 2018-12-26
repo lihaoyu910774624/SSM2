@@ -92,21 +92,21 @@ public class SsmQuestionServiceImpl implements SsmQuestionService {
 	}
 
 	@Override
-	public List<SimulateQuestion> getSimulateDanxuan(String userid, String category_pid) {
+	public List<SimulateQuestion> getSimulateDanxuan(String userid,String category_id, String category_pid) {
 		
-		return ssmQuestionMapper.getSimulateDanxuan(userid, category_pid);
+		return ssmQuestionMapper.getSimulateDanxuan(userid, category_id,category_pid);
 	}
 
 	@Override
-	public List<SimulateQuestion> getSimulateDuoxuan(String userid, String category_pid) {
+	public List<SimulateQuestion> getSimulateDuoxuan(String userid, String category_id,String category_pid) {
 		
-		return ssmQuestionMapper.getSimulateDuoxuan(userid, category_pid);
+		return ssmQuestionMapper.getSimulateDuoxuan(userid,category_id, category_pid);
 	}
 
 	@Override
-	public List<SimulateQuestion> getSimulatePanduan(String userid, String category_pid) {
+	public List<SimulateQuestion> getSimulatePanduan(String userid, String category_id,String category_pid) {
 		
-		return ssmQuestionMapper.getSimulatePanduan(userid, category_pid);
+		return ssmQuestionMapper.getSimulatePanduan(userid, category_id,category_pid);
 	}
 
 	@Override

@@ -65,9 +65,11 @@
 			
 		<!-- table指定每个表的生成策略 -->
 		 <table
-			tableName="ssm_wx_token"
-			domainObjectName="SsmWxToken"></table>
-		
+			tableName="ssm_simulate"
+			domainObjectName="SsmSimulate"></table>
+		<table
+			tableName="ssm_simulate_question"
+			domainObjectName="SsmSimulateQuestion"></table>
 			<!--
 			 <table
 			tableName="ssm_question_study"
