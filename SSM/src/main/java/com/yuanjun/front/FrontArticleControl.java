@@ -93,7 +93,9 @@ public class FrontArticleControl {
 					SsmQuestionExample ssmQuestionExample = new SsmQuestionExample();
 					SsmQuestionExample.Criteria  ssmQuestionCriteria = ssmQuestionExample.createCriteria();
 					ssmQuestionCriteria.andFlagEqualTo((byte)1);
+					ssmQuestionCriteria.andKindEqualTo((byte)2);
 					ssmQuestionCriteria.andSubjectidEqualTo(Byte.valueOf(ssmCategory.getId()+""));
+					
 					long sunCount =      ssmQuestionService.countByExample(ssmQuestionExample);
 					subject.setSumCount(String.valueOf(sunCount));
 					

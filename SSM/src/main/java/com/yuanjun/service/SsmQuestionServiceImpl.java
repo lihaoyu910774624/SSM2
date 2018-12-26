@@ -10,6 +10,7 @@ import com.yuanjun.bean.SsmQuestionExample;
 import com.yuanjun.dao.SsmQuestionMapper;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestion;
 import com.yuanjun.vo.question.QuestionDto;
+import com.yuanjun.vo.simulate.SimulateQuestion;
 
 @Service
 public class SsmQuestionServiceImpl implements SsmQuestionService {
@@ -88,6 +89,30 @@ public class SsmQuestionServiceImpl implements SsmQuestionService {
 			int start, int end, String userid) {
 	
 		return ssmQuestionMapper.findTrainingQuestion(category_pid, category_id, chapter_id, start, end, userid);
+	}
+
+	@Override
+	public List<SimulateQuestion> getSimulateDanxuan(String userid, String category_pid) {
+		
+		return ssmQuestionMapper.getSimulateDanxuan(userid, category_pid);
+	}
+
+	@Override
+	public List<SimulateQuestion> getSimulateDuoxuan(String userid, String category_pid) {
+		
+		return ssmQuestionMapper.getSimulateDuoxuan(userid, category_pid);
+	}
+
+	@Override
+	public List<SimulateQuestion> getSimulatePanduan(String userid, String category_pid) {
+		
+		return ssmQuestionMapper.getSimulatePanduan(userid, category_pid);
+	}
+
+	@Override
+	public List<SimulateQuestion> getSimulateQuestionFree(String userid, String category_pid, String type) {
+		
+		return ssmQuestionMapper.getSimulateQuestionFree(userid, category_pid, type);
 	}
 
 	

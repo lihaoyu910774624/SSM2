@@ -4,11 +4,22 @@ import com.yuanjun.bean.SsmQuestion;
 import com.yuanjun.bean.SsmQuestionExample;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestion;
 import com.yuanjun.vo.question.QuestionDto;
+import com.yuanjun.vo.simulate.SimulateQuestion;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface SsmQuestionMapper {
+	List<SimulateQuestion> getSimulateDanxuan(@Param("userid") String userid,
+			@Param("category_pid") String category_pid);
+	List<SimulateQuestion> getSimulateDuoxuan(@Param("userid") String userid,
+			@Param("category_pid") String category_pid);
+	List<SimulateQuestion> getSimulatePanduan(@Param("userid") String userid,
+			@Param("category_pid") String category_pid);
+	List<SimulateQuestion>    getSimulateQuestionFree(
+			@Param("userid") String userid,
+			@Param("category_pid") String category_pid,
+			       @Param("type") String type);
 	long countByChapter (@Param("chapterId") String chapterId);
 	
 	long  countByType(@Param("category_pid") String category_pid, @Param("category_id") String category_id,

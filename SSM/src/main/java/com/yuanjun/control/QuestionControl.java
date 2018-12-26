@@ -122,13 +122,13 @@ public class QuestionControl
       SsmQuestion question = new SsmQuestion();
       question.setQuestionid(questionid);
       question.setTitle(title);
+      question.setCategoryid(Byte.valueOf(category_pid));
+      question.setSubjectid(Byte.valueOf(category_id));
       if ("1".equals(kind)) {
-        question.setCategoryid(Byte.valueOf("0"));
-        question.setSubjectid(Byte.valueOf("0"));
+       
         question.setChapterid("0");
       } else {
-        question.setCategoryid(Byte.valueOf(category_pid));
-        question.setSubjectid(Byte.valueOf(category_id));
+        
         question.setChapterid(chapter_id);
       }
       question.setFraction(Integer.valueOf(fraction));
@@ -215,7 +215,21 @@ public class QuestionControl
   @Transactional
   @RequestMapping(value={"/update"}, method={org.springframework.web.bind.annotation.RequestMethod.POST})
   @ResponseBody
-  public Message updateQuestion(@RequestParam("adminId") String adminId, @RequestParam("questionid") String questionid, @RequestParam("title") String title, @RequestParam("correctanswer") String correctanswer, @RequestParam("category_pid") String category_pid, @RequestParam("category_id") String category_id, @RequestParam("chapter_id") String chapter_id, @RequestParam("sort_no") String sort_no, @RequestParam("type") String type, @RequestParam(value="kind", defaultValue="2") String kind, @RequestParam("fraction") String fraction, @RequestParam("analysis") String analysis, @RequestParam("brief") String brief, @RequestParam("option") String option, @RequestParam("status") String status)
+  public Message updateQuestion(@RequestParam("adminId") String adminId,
+		  @RequestParam("questionid") String questionid, 
+		  @RequestParam("title") String title,
+		  @RequestParam("correctanswer") String correctanswer, 
+		  @RequestParam("category_pid") String category_pid, 
+		  @RequestParam("category_id") String category_id, 
+		  @RequestParam("chapter_id") String chapter_id, 
+		  @RequestParam("sort_no") String sort_no, 
+		  @RequestParam("type") String type, 
+		  @RequestParam(value="kind", defaultValue="2") String kind,
+		  @RequestParam("fraction") String fraction, 
+		  @RequestParam("analysis") String analysis, 
+		  @RequestParam("brief") String brief,
+		  @RequestParam("option") String option,
+		  @RequestParam("status") String status)
   {
     Message message = new Message();
 
@@ -256,13 +270,13 @@ public class QuestionControl
       question.setFraction(Integer.valueOf(fraction));
       question.setType(Byte.valueOf(type));
       question.setCorrectanswer(correctanswer);
+      question.setCategoryid(Byte.valueOf(category_pid));
+      question.setSubjectid(Byte.valueOf(category_id));
       if ("1".equals(kind)) {
-        question.setCategoryid(Byte.valueOf("0"));
-        question.setSubjectid(Byte.valueOf("0"));
+        
         question.setChapterid("0");
       } else {
-        question.setCategoryid(Byte.valueOf(category_pid));
-        question.setSubjectid(Byte.valueOf(category_id));
+        
         question.setChapterid(chapter_id);
       }
       question.setStatus(Byte.valueOf(status));

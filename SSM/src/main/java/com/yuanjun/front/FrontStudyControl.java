@@ -138,31 +138,32 @@ public class FrontStudyControl {
 	public Message saveStudy(
 			
 			@RequestParam(value="category_pid" ,defaultValue="") String category_pid,
-			@RequestParam(value="category_id") String category_id,			
+			@RequestParam(value="category_id") String category_id,	
+			@RequestParam(value="chapterid",defaultValue="") String chapterid,	
 			@RequestParam(value="userid") String userid,
-			@RequestParam(value="ansers") String ansers,
-			@RequestParam(value="kind") String kind,
-			@RequestParam(value="status") String status
+			
+			@RequestParam(value="ansers") String ansers
+			
 			
 			) {		
 		    Message message = new Message();
 		    List<AnserDto> anserList = JSON.parseArray(ansers, AnserDto.class);
+		    System.out.println(anserList);
 		    QuestionStudyModel questionStudyModel = new QuestionStudyModel();
 		    questionStudyModel.setUserid(userid);
 		    questionStudyModel.setCategoryid(category_id);
 		    questionStudyModel.setCategorypid(category_pid);
-		    questionStudyModel.setKind(kind);
-		    questionStudyModel.setStatus(status);
+		    questionStudyModel.setChapterid(chapterid);
 		    questionStudyModel.setAnserList(anserList);		    
 		    int index = ssmQuestionStudyService.saveStudyAll(questionStudyModel);
 		    
 		    if(index>0) {
 		    	message.setCode("1");
-		    	message.setMsg("数据保存成功");
+		    	message.setMsg("提交成功");
 		    }else {
 		    	
 		    	message.setCode("0");
-		    	message.setMsg("数据保存失败");
+		    	message.setMsg("提交失败");
 		    }
 		
 		return message ;

@@ -28,6 +28,9 @@ import com.yuanjun.vo.UserInfo;
 import com.yuanjun.vo.FrontQuestion.TrainingOption;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestion;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestionListMessage;
+import com.yuanjun.vo.simulate.SimulateQuestion;
+import com.yuanjun.vo.simulate.SimulateQuestionListMessage;
+import com.yuanjun.vo.simulate.SimulateVo;
 
 @Controller
 @RequestMapping("/FrontQuestion")
@@ -185,7 +188,7 @@ public class FrontQuestionControl {
 			    	  
 			    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 3);
 			    		// vip 过期  至显示免费题目
-			    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,chapter_id, 0, 14,userid);
+			    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 14,userid);
 			    		 if (data != null && data.size() > 0) {
 			 				for (int i = 0; i < data.size(); i++) {
 			 					TrainingQuestion trainingQuestion = data.get(i);
@@ -221,7 +224,7 @@ public class FrontQuestionControl {
 		    	  
 		    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, chapter_id, 1, 3);
 		    		// 没有查找到购买记录  显示免费题目
-		    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,chapter_id, 0, 14,userid);
+		    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 14,userid);
 					 message.setCode("1");
 					 message.setMsg("成功");
 					 message.setDanxuan(danxuan);
@@ -236,6 +239,117 @@ public class FrontQuestionControl {
 		}
 		return message ;
 	}
+	
+	
+	@RequestMapping(value="/simulateQuestion", method=RequestMethod.POST)
+	@ResponseBody 
+	public SimulateQuestionListMessage simulateQuestion(
+			@RequestParam(value="userid") String userid,			
+			@RequestParam(value="category_pid") String category_pid
+				
+			) {
+		SimulateQuestionListMessage message = new SimulateQuestionListMessage();
+		SimulateVo  vo = new SimulateVo ();
+		if("".equals(category_pid)) {
+					
+					message.setCode("0");
+					message.setMsg("pid不能位空");	
+					return message ;
+				}
+				List<String> ids = new ArrayList<String>();
+				ids.add("1");
+				ids.add("2");
+				ids.add("3");		
+					if(!ids.contains(category_pid)) {
+						message.setCode("0");
+						message.setMsg("pid不在有效取值范围内");			
+						return message ;
+					}
+					if("1".equals(category_pid)) {
+						message.setCategoryPidTitle("保险高管任职资格考试(中介)");
+						
+					}
+					if("2".equals(category_pid)) {
+						message.setCategoryPidTitle("保险高管任职资格考试(寿险)");
+						
+					}
+					if("3".equals(category_pid)) {
+						message.setCategoryPidTitle("保险高管任职资格考试(产险)");
+						
+					}
+		//校验是否为合法用户 
+		UserInfo user    =ssmUserService.getUserInfoById(userid);	
+			if(user==null) {
+				message.setCode("0");
+				message.setMsg("0");			
+				return message ;
+			}
+		//按分类出题 判断用户是否为当前分类的付费用户
+			SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+			SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
+			ssmVipRecordCriteria.andFlagEqualTo((byte)1);			
+			ssmVipRecordCriteria.andCategorypidEqualTo(Integer.valueOf(category_pid));
+			ssmVipRecordCriteria.andUserIdEqualTo(userid);
+			List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
+			    if(ssmVipRecordList!=null&&ssmVipRecordList.size()>0) {			    	
+			    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
+			    	long exprietime = ssmVipRecord.getExprietime();
+			    	long now = (int)System.currentTimeMillis()/1000;
+			    	if(now<exprietime) {
+			    		// vip 还在有效期内  显示所有题的内容
+			    		//付费 			    		
+			    		// 单选40题
+			    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateDanxuan(userid, category_pid);
+			    		// 多选 15题
+			    		List<SimulateQuestion> duoxuan = ssmQuestionService.getSimulateDuoxuan(userid, category_pid);
+			    		// 判断30题			    		
+			    		List<SimulateQuestion> panduan = ssmQuestionService.getSimulatePanduan(userid, category_pid);
+			    		vo.setDanxuan(danxuan);
+			    		vo.setDuoxuan(duoxuan);
+			    		vo.setPanduan(panduan);
+			    		
+			    	}else {
+			    		// vip 过期显示免费的题 标志物是免费的题  
+			    		// 单选
+			    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "1");
+			    		// 多选 
+			    		List<SimulateQuestion> duoxuan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "2");
+			    		// 判断			    		
+			    		List<SimulateQuestion> panduan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "3");
+			    		vo.setDanxuan(danxuan);
+			    		vo.setDuoxuan(duoxuan);
+			    		vo.setPanduan(panduan);
+			    		message.setCode("1");
+						message.setMsg("成功");			
+						return message ;
+			    		
+			    	}
+			    }else {
+			    	//没有付费则返回免费15题
+			    	// 单选
+		    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "1");
+		    		// 多选 
+		    		List<SimulateQuestion> duoxuan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "2");
+		    		// 判断			    		
+		    		List<SimulateQuestion> panduan = ssmQuestionService.getSimulateQuestionFree(userid, category_pid, "3");
+		    		vo.setDanxuan(danxuan);
+		    		vo.setDuoxuan(duoxuan);
+		    		vo.setPanduan(panduan);
+		    		message.setCode("1");
+					message.setMsg("成功");			
+					return message ;
+			    	
+			    }
+			    message.setCode("1");
+				message.setMsg("成功");
+		return message ;
+	}
+	
+	
+	
+	
+	
+	
 	
 	@RequestMapping(value="/saveQuestionStudy", method=RequestMethod.POST)
 	@ResponseBody 

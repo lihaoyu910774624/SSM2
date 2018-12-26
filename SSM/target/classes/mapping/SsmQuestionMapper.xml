@@ -132,6 +132,106 @@
 			LIMIT #{start},#{end} 
   
    </select>
+		   <resultMap type="com.yuanjun.vo.simulate.SimulateQuestion" id="SimulateQuestion">
+		    <result column="questionid"  property="questionid" />
+		    <result column="title"  property="title" />
+		    <result column="type"  property="type" />
+		    <result column="correctanswer"  property="correctanswer" />
+		    <collection property="option" ofType="com.yuanjun.vo.simulate.SimulateOption">
+		      <result column="no"  property="no" />
+		      <result column="optionTitle"  property="optionTitle" />
+		      <result column="sortNo"  property="sortNo" />  
+		      <result column="myanser"  property="myanser" />    
+		    </collection>
+		  </resultMap>
+   <select id="getSimulateQuestionFree" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo ,
+			IFNULL(c.myanser,"")  myanser
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			LEFT JOIN (select questionid,myanser from ssm_question_study where userid=#{userid}) AS c ON a.questionid = c.questionid
+			WHERE
+			a.flag = 1
+			and a.kind = 1			
+			and a.categoryid =#{category_pid}
+			and a.type = #{type}
+			ORDER BY a.sort_no ,b.sort_no 
+   </select>
+    <select id="getSimulateDanxuan" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo ,
+			IFNULL(c.myanser,"")  myanser
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			LEFT JOIN (select questionid,myanser from ssm_question_study where userid=#{userid}) AS c ON a.questionid = c.questionid
+			WHERE
+			a.id >= ((SELECT MAX(id) FROM ssm_question)-(SELECT MIN(id) FROM ssm_question)) * RAND() + (SELECT MIN(id) FROM ssm_question)
+			a.flag = 1
+			and a.kind =2
+			and a.type=1			
+			and a.categoryid =#{category_pid}
+			ORDER BY a.sort_no ,b.sort_no 
+			LIMIT 40
+   </select>
+    <select id="getSimulateDuoxuan" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo ,
+			IFNULL(c.myanser,"")  myanser
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			LEFT JOIN (select questionid,myanser from ssm_question_study where userid=#{userid}) AS c ON a.questionid = c.questionid
+			WHERE
+			a.id >= ((SELECT MAX(id) FROM ssm_question)-(SELECT MIN(id) FROM ssm_question)) * RAND() + (SELECT MIN(id) FROM ssm_question)
+			a.flag = 1
+			and a.kind =2
+			and a.type=2			
+			and a.categoryid =#{category_pid}
+			ORDER BY a.sort_no ,b.sort_no 
+			LIMIT 15
+   </select>
+    <select id="getSimulatePanduan" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo ,
+			IFNULL(c.myanser,"")  myanser
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			LEFT JOIN (select questionid,myanser from ssm_question_study where userid=#{userid}) AS c ON a.questionid = c.questionid
+			WHERE
+			a.id >= ((SELECT MAX(id) FROM ssm_question)-(SELECT MIN(id) FROM ssm_question)) * RAND() + (SELECT MIN(id) FROM ssm_question)
+			a.flag = 1
+			and a.kind =2
+			and a.type=3			
+			and a.categoryid =#{category_pid}
+			ORDER BY a.sort_no ,b.sort_no 
+			LIMIT 30
+   </select>
+   
+   
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
