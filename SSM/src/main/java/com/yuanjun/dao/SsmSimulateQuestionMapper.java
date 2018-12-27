@@ -2,12 +2,17 @@ package com.yuanjun.dao;
 
 import com.yuanjun.bean.SsmSimulateQuestion;
 import com.yuanjun.bean.SsmSimulateQuestionExample;
+import com.yuanjun.vo.simulate.SimulateInfo;
+import com.yuanjun.vo.simulate.WrongSimulateVo;
 import com.yuanjun.vo.simulateQuestion.simulateQuestionVo;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface SsmSimulateQuestionMapper {
+	List<SimulateInfo>   getSimulateInfo(@Param("userid")String userid);
+	List<WrongSimulateVo>   getWrongSimulate(@Param("simulateid") String simulateid);
+	
 	int saveAllSimulateQuestion(List<simulateQuestionVo> list);
     long countByExample(SsmSimulateQuestionExample example);
 

@@ -1,7 +1,9 @@
 package com.yuanjun.front;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ import com.yuanjun.bean.SsmQuestionStudyExample;
 import com.yuanjun.bean.SsmSimulate;
 import com.yuanjun.bean.SsmSimulateExample;
 import com.yuanjun.bean.SsmSimulateQuestion;
+import com.yuanjun.bean.SsmSimulateQuestionExample;
 import com.yuanjun.bean.SsmVipRecord;
 import com.yuanjun.bean.SsmVipRecordExample;
 import com.yuanjun.comm.Message;
@@ -36,9 +39,13 @@ import com.yuanjun.vo.FrontQuestion.TrainingOption;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestion;
 import com.yuanjun.vo.FrontQuestion.TrainingQuestionListMessage;
 import com.yuanjun.vo.simulate.MyanserSimulate;
+import com.yuanjun.vo.simulate.SimulateInfo;
+import com.yuanjun.vo.simulate.SimulateInfoMessage;
 import com.yuanjun.vo.simulate.SimulateQuestion;
 import com.yuanjun.vo.simulate.SimulateQuestionListMessage;
 import com.yuanjun.vo.simulate.SimulateVo;
+import com.yuanjun.vo.simulate.WrongSimulateMessage;
+import com.yuanjun.vo.simulate.WrongSimulateVo;
 import com.yuanjun.vo.simulateQuestion.simulateQuestionVo;
 
 @Controller
@@ -522,8 +529,104 @@ public class FrontQuestionControl {
 	
 	
 	
+	@RequestMapping(value="/getSimulateInfo", method=RequestMethod.POST)
+	@ResponseBody 
+	public SimulateInfoMessage getSimulateInfo(
+			@RequestParam(value="userid") String userid) {
+		SimulateInfoMessage message = new SimulateInfoMessage ();
+		SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		List<SimulateInfo> data = new ArrayList<>();
+		data =  ssmSimulateService.getSimulateInfo(userid);
+		if(data!=null&&data.size()>0) {
+			for(int i=0;i<data.size();i++) {
+				SimulateInfo info = new SimulateInfo ();
+				info = data.get(i);
+				Date date = new Date(Long.valueOf(info.getStart_time())*1000L);
+				String sDateTime = sdf.format(date); 
+				info.setStart_time(sDateTime);
+			}
+		}
+		
+		message.setCode("1");
+		message.setMsg("成功");
+		message.setData(data);
+		return message ;
+	}
 	
-	
+	@RequestMapping(value="/getWrongSimulate", method=RequestMethod.POST)
+	@ResponseBody 
+	public WrongSimulateMessage getWrongSimulate(
+			@RequestParam(value="userid") String userid,
+			@RequestParam(value="simulateid") String simulateid) {
+		WrongSimulateMessage message = new WrongSimulateMessage();
+		SsmSimulateExample ssmSimulateExample = new SsmSimulateExample ();
+		SsmSimulateExample.Criteria ssmSimulateExampleCriteria = ssmSimulateExample.createCriteria();
+		ssmSimulateExampleCriteria.andUseridEqualTo(userid);
+		ssmSimulateExampleCriteria.andSimulateidEqualTo(simulateid);
+		
+		List<SsmSimulate> ssmSimulateList =   ssmSimulateService.selectByExample(ssmSimulateExample);
+		List<WrongSimulateVo> data = new ArrayList<>();
+		if(ssmSimulateList!=null&&ssmSimulateList.size()>0) {
+			
+		 data= ssmSimulateQuestionService.getWrongSimulate(simulateid);
+		 message.setCode("1");
+		 message.setMsg("获取成功");
+		 message.setData(data);
+			
+		}else {
+			 message.setCode("0");
+			 message.setMsg("获取失败");	
+		}
+		return message ;
+	}
+	@RequestMapping(value="/updateSimulateScore", method=RequestMethod.POST)
+	@ResponseBody
+	public Message updateSimulateScore(
+			@RequestParam(value="userid") String userid,
+			@RequestParam(value="simulateid") String simulateid,
+			@RequestParam(value="type") String type ,
+			@RequestParam(value="questionid") String questionid 
+			) {
+		Message message = new  Message ();
+		
+		
+			
+			SsmSimulateQuestionExample ssmSimulateQuestionExample = new SsmSimulateQuestionExample();
+			SsmSimulateQuestionExample.Criteria ssmSimulateQuestionExampleCriteria = ssmSimulateQuestionExample.createCriteria();
+			ssmSimulateQuestionExampleCriteria.andSimulateidEqualTo(simulateid);
+			ssmSimulateQuestionExampleCriteria.andQuestionidEqualTo(questionid);
+			SsmSimulateQuestion ssmSimulateQuestion = new SsmSimulateQuestion();
+			if("1".equals(type)||"3".equals(type)) {
+				ssmSimulateQuestion.setScore((byte)1);
+				
+				
+			}else if("2".equals(type)) {
+				
+				ssmSimulateQuestion.setScore((byte)2);
+			}
+			
+			int index = ssmSimulateQuestionService.updateByExampleSelective(ssmSimulateQuestion, ssmSimulateQuestionExample);
+			if(index>0) {
+				message.setCode("1");
+				message.setMsg("操作成功");
+			}else {
+				message.setCode("0");
+				message.setMsg("操作失败");
+			}
+			SsmSimulateExample ssmSimulateExample = new SsmSimulateExample ();
+			SsmSimulateExample.Criteria ssmSimulateExampleCriteria = ssmSimulateExample.createCriteria();
+			ssmSimulateExampleCriteria.andUseridEqualTo(userid);
+			ssmSimulateExampleCriteria.andSimulateidEqualTo(simulateid);
+			ssmSimulateExampleCriteria.andScoreEqualTo(0);
+			long count = ssmSimulateService.countByExample(ssmSimulateExample);
+		    if(count==0) {
+		    	SsmSimulate ssmSimulate = new SsmSimulate ();
+		    	ssmSimulate.setFlag((byte)0);
+		    	ssmSimulateService.updateByExampleSelective(ssmSimulate, ssmSimulateExample);
+		    }
+		
+	  return	 message ;
+	}
 	
 	@RequestMapping(value="/saveQuestionStudy", method=RequestMethod.POST)
 	@ResponseBody 

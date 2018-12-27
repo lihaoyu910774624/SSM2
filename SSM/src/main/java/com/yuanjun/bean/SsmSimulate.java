@@ -15,6 +15,8 @@ public class SsmSimulate {
 
     private Byte flag;
 
+    private Byte categoryPid;
+
     public Integer getId() {
         return id;
     }
@@ -69,5 +71,13 @@ public class SsmSimulate {
 
     public void setFlag(Byte flag) {
         this.flag = flag;
+    }
+
+    public Byte getCategoryPid() {
+        return categoryPid;
+    }
+
+    public void setCategoryPid(Byte categoryPid) {
+        this.categoryPid = categoryPid;
     }
 }

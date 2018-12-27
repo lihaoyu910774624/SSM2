@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yuanjun.bean.SsmSimulateQuestion;
+import com.yuanjun.bean.SsmSimulateQuestionExample;
 import com.yuanjun.dao.SsmSimulateQuestionMapper;
+import com.yuanjun.vo.simulate.WrongSimulateVo;
 import com.yuanjun.vo.simulateQuestion.simulateQuestionVo;
 @Service
 public class SsmSimulateQuestionServiceImpl implements SsmSimulateQuestionService {
@@ -23,6 +25,18 @@ public class SsmSimulateQuestionServiceImpl implements SsmSimulateQuestionServic
 	public int saveAllSimulateQuestion(List<simulateQuestionVo> list) {
 		
 		return ssmSimulateQuestionMapper.saveAllSimulateQuestion(list);
+	}
+
+	@Override
+	public List<WrongSimulateVo> getWrongSimulate(String simulateid) {
+		
+		return ssmSimulateQuestionMapper.getWrongSimulate(simulateid);
+	}
+
+	@Override
+	public int updateByExampleSelective(SsmSimulateQuestion record, SsmSimulateQuestionExample example) {
+		
+		return ssmSimulateQuestionMapper.updateByExampleSelective(record, example);
 	}
 
 }

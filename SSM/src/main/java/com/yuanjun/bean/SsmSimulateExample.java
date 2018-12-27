@@ -543,6 +543,66 @@ public class SsmSimulateExample {
             addCriterion("flag not between", value1, value2, "flag");
             return (Criteria) this;
         }
+
+        public Criteria andCategoryPidIsNull() {
+            addCriterion("category_pid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidIsNotNull() {
+            addCriterion("category_pid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidEqualTo(Byte value) {
+            addCriterion("category_pid =", value, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidNotEqualTo(Byte value) {
+            addCriterion("category_pid <>", value, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidGreaterThan(Byte value) {
+            addCriterion("category_pid >", value, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidGreaterThanOrEqualTo(Byte value) {
+            addCriterion("category_pid >=", value, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidLessThan(Byte value) {
+            addCriterion("category_pid <", value, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidLessThanOrEqualTo(Byte value) {
+            addCriterion("category_pid <=", value, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidIn(List<Byte> values) {
+            addCriterion("category_pid in", values, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidNotIn(List<Byte> values) {
+            addCriterion("category_pid not in", values, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidBetween(Byte value1, Byte value2) {
+            addCriterion("category_pid between", value1, value2, "categoryPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andCategoryPidNotBetween(Byte value1, Byte value2) {
+            addCriterion("category_pid not between", value1, value2, "categoryPid");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

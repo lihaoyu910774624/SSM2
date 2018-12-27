@@ -10,6 +10,44 @@
     <result column="flag" jdbcType="TINYINT" property="flag" />
   </resultMap>
   
+  <resultMap type="com.yuanjun.vo.simulate.WrongSimulateVo" id="WrongSimulate">
+    <result column="questionid"  property="questionid" />
+    <result column="title"  property="title" />
+    <result column="type"  property="type" />
+    <result column="correctanswer"  property="correctanswer" />
+    <result column="myanswer"  property="myanswer" /> 
+    <result column="analysis"  property="analysis" />  
+    <result column="score"  property="score" />      
+    <collection property="option" ofType="com.yuanjun.vo.simulate.QuestionOption">
+      <result column="no"  property="no" />
+      <result column="optionTitle"  property="optionTitle" />
+      <result column="sortNo"  property="sortNo" />
+    </collection>
+  </resultMap>
+  <select id="getWrongSimulate"  resultMap="WrongSimulate" >
+      SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			a.analysis analysis,						
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo,
+			c.myanswer  myanswer ,
+      c.score
+			FROM
+      ssm_simulate_question as c LEFT JOIN ssm_question a ON  c.questionid = a.questionid LEFT JOIN ssm_question_option b  ON a.questionid = b.questionid
+      WHERE
+			a.flag = 1
+      and simulateid= #{simulateid}
+      and c.score = 0
+			ORDER BY a.sort_no,b.sort_no 
+
+			
+     
+  </select>
+  
   <insert id="saveAllSimulateQuestion" parameterType="java.util.List">
     insert into ssm_simulate_question 
     (questionid, simulateid, myanswer, score )

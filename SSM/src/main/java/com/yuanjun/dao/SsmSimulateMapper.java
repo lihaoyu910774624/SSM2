@@ -2,10 +2,14 @@ package com.yuanjun.dao;
 
 import com.yuanjun.bean.SsmSimulate;
 import com.yuanjun.bean.SsmSimulateExample;
+import com.yuanjun.vo.simulate.SimulateInfo;
+
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface SsmSimulateMapper {
+	
+	 List<SimulateInfo>   getSimulateInfo(@Param("userid") String userid);
     long countByExample(SsmSimulateExample example);
 
     int deleteByExample(SsmSimulateExample example);

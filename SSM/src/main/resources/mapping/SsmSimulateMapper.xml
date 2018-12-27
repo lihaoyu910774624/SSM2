@@ -9,7 +9,18 @@
     <result column="end_time" jdbcType="INTEGER" property="endTime" />
     <result column="score" jdbcType="INTEGER" property="score" />
     <result column="flag" jdbcType="TINYINT" property="flag" />
+    <result column="category_pid" jdbcType="TINYINT" property="categoryPid" />
   </resultMap>
+  <select id="getSimulateInfo"  resultType="com.yuanjun.vo.simulate.SimulateInfo">
+	select b.title title,
+	 a.start_time start_time,
+	 a.simulateid simulateid
+	 from ssm_simulate a LEFT JOIN
+	ssm_category b ON a.category_pid=b.id
+	 where a.userid=#{userid} ORDER BY a.start_time DESC
+	 ;
+  
+  </select>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -69,7 +80,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, userid, simulateid, start_time, end_time, score, flag
+    id, userid, simulateid, start_time, end_time, score, flag, category_pid
   </sql>
   <select id="selectByExample" parameterType="com.yuanjun.bean.SsmSimulateExample" resultMap="BaseResultMap">
     select
@@ -104,10 +115,10 @@
   <insert id="insert" parameterType="com.yuanjun.bean.SsmSimulate">
     insert into ssm_simulate (id, userid, simulateid, 
       start_time, end_time, score, 
-      flag)
+      flag, category_pid)
     values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=CHAR}, #{simulateid,jdbcType=CHAR}, 
       #{startTime,jdbcType=INTEGER}, #{endTime,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, 
-      #{flag,jdbcType=TINYINT})
+      #{flag,jdbcType=TINYINT}, #{categoryPid,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmSimulate">
     insert into ssm_simulate
@@ -133,6 +144,9 @@
       <if test="flag != null">
         flag,
       </if>
+      <if test="categoryPid != null">
+        category_pid,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -155,6 +169,9 @@
       </if>
       <if test="flag != null">
         #{flag,jdbcType=TINYINT},
+      </if>
+      <if test="categoryPid != null">
+        #{categoryPid,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -188,6 +205,9 @@
       <if test="record.flag != null">
         flag = #{record.flag,jdbcType=TINYINT},
       </if>
+      <if test="record.categoryPid != null">
+        category_pid = #{record.categoryPid,jdbcType=TINYINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -201,7 +221,8 @@
       start_time = #{record.startTime,jdbcType=INTEGER},
       end_time = #{record.endTime,jdbcType=INTEGER},
       score = #{record.score,jdbcType=INTEGER},
-      flag = #{record.flag,jdbcType=TINYINT}
+      flag = #{record.flag,jdbcType=TINYINT},
+      category_pid = #{record.categoryPid,jdbcType=TINYINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -227,6 +248,9 @@
       <if test="flag != null">
         flag = #{flag,jdbcType=TINYINT},
       </if>
+      <if test="categoryPid != null">
+        category_pid = #{categoryPid,jdbcType=TINYINT},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -237,7 +261,8 @@
       start_time = #{startTime,jdbcType=INTEGER},
       end_time = #{endTime,jdbcType=INTEGER},
       score = #{score,jdbcType=INTEGER},
-      flag = #{flag,jdbcType=TINYINT}
+      flag = #{flag,jdbcType=TINYINT},
+      category_pid = #{categoryPid,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
