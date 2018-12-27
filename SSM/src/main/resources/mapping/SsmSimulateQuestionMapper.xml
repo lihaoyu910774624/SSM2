@@ -9,6 +9,21 @@
     <result column="score" jdbcType="TINYINT" property="score" />
     <result column="flag" jdbcType="TINYINT" property="flag" />
   </resultMap>
+  
+  <insert id="saveAllSimulateQuestion" parameterType="java.util.List">
+    insert into ssm_simulate_question 
+    (questionid, simulateid, myanswer, score )
+    values
+    <foreach collection ="list" item="simulateQuestion" index= "index" separator =",">
+		(
+		#{simulateQuestion.questionid},
+		#{simulateQuestion.simulateid},
+		#{simulateQuestion.myanswer},
+		#{simulateQuestion.score}
+		)    
+     </foreach >
+  
+  </insert>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">

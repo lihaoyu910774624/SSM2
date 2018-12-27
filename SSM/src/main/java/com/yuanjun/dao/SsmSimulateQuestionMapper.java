@@ -2,10 +2,13 @@ package com.yuanjun.dao;
 
 import com.yuanjun.bean.SsmSimulateQuestion;
 import com.yuanjun.bean.SsmSimulateQuestionExample;
+import com.yuanjun.vo.simulateQuestion.simulateQuestionVo;
+
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface SsmSimulateQuestionMapper {
+	int saveAllSimulateQuestion(List<simulateQuestionVo> list);
     long countByExample(SsmSimulateQuestionExample example);
 
     int deleteByExample(SsmSimulateQuestionExample example);

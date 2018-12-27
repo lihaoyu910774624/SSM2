@@ -92,27 +92,40 @@ public class SsmQuestionServiceImpl implements SsmQuestionService {
 	}
 
 	@Override
-	public List<SimulateQuestion> getSimulateDanxuan(String userid,String category_id, String category_pid) {
+	public List<SimulateQuestion> getSimulateDanxuan(String userid,String category_id, String category_pid,Integer id,Integer size) {
 		
-		return ssmQuestionMapper.getSimulateDanxuan(userid, category_id,category_pid);
+		return ssmQuestionMapper.getSimulateDanxuan(userid, category_id,category_pid,id,size);
 	}
 
 	@Override
-	public List<SimulateQuestion> getSimulateDuoxuan(String userid, String category_id,String category_pid) {
+	public List<SimulateQuestion> getSimulateDuoxuan(String userid, String category_id,String category_pid,Integer id,Integer size) {
 		
-		return ssmQuestionMapper.getSimulateDuoxuan(userid,category_id, category_pid);
+		return ssmQuestionMapper.getSimulateDuoxuan(userid,category_id, category_pid,id,size);
 	}
 
 	@Override
-	public List<SimulateQuestion> getSimulatePanduan(String userid, String category_id,String category_pid) {
+	public List<SimulateQuestion> getSimulatePanduan(String userid, String category_id,String category_pid,Integer id,Integer size) {
 		
-		return ssmQuestionMapper.getSimulatePanduan(userid, category_id,category_pid);
+		return ssmQuestionMapper.getSimulatePanduan(userid, category_id,category_pid,id,size);
 	}
 
 	@Override
 	public List<SimulateQuestion> getSimulateQuestionFree(String userid, String category_pid, String type) {
 		
 		return ssmQuestionMapper.getSimulateQuestionFree(userid, category_pid, type);
+	}
+
+	@Override
+	public Integer getRoundId() {
+		
+		return ssmQuestionMapper.getRoundId();
+	}
+
+	@Override
+	public List<SimulateQuestion> getSimulateReverse(String userid, String category_id, String category_pid, Integer id,
+			Integer size, Integer type) {
+		
+		return ssmQuestionMapper.getSimulateReverse(userid, category_id, category_pid, id, size, type);
 	}
 
 	

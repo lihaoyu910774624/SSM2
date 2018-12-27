@@ -11,11 +11,19 @@ import com.yuanjun.vo.question.QuestionDto;
 import com.yuanjun.vo.simulate.SimulateQuestion;
 
 public interface SsmQuestionService {
-	List<SimulateQuestion> getSimulateDanxuan(String userid,String category_id, String category_pid);
+	List<SimulateQuestion>	getSimulateReverse(@Param("userid") String userid,
+			 String category_id,
+			 String category_pid,
+			 Integer id,
+		     Integer size,
+			 Integer type
+			);
+	Integer getRoundId();
+	List<SimulateQuestion> getSimulateDanxuan(String userid,String category_id, String category_pid ,Integer id,Integer size);
 
-	List<SimulateQuestion> getSimulateDuoxuan(String userid,String category_id, String category_pid);
+	List<SimulateQuestion> getSimulateDuoxuan(String userid,String category_id, String category_pid,Integer id,Integer size);
 
-	List<SimulateQuestion> getSimulatePanduan(String userid,String category_id, String category_pid);
+	List<SimulateQuestion> getSimulatePanduan(String userid,String category_id, String category_pid,Integer id,Integer size);
 
 	List<SimulateQuestion> getSimulateQuestionFree(String userid, String category_pid, String type);
 	

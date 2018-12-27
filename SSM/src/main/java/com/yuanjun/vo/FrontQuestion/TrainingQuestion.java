@@ -8,10 +8,20 @@ public class TrainingQuestion {
 	private    String title ;
 	private    String type ;
 	private    String correctanswer ;
+	private    String myanser ;
+	
 	
 	private List<TrainingOption> option ;
 	
 	
+	
+	
+	public String getMyanser() {
+		return myanser;
+	}
+	public void setMyanser(String myanser) {
+		this.myanser = myanser;
+	}
 	public String getType() {
 		return type;
 	}

@@ -39,6 +39,7 @@ import com.yuanjun.vo.simulate.MyanserSimulate;
 import com.yuanjun.vo.simulate.SimulateQuestion;
 import com.yuanjun.vo.simulate.SimulateQuestionListMessage;
 import com.yuanjun.vo.simulate.SimulateVo;
+import com.yuanjun.vo.simulateQuestion.simulateQuestionVo;
 
 @Controller
 @RequestMapping("/FrontQuestion")
@@ -132,6 +133,7 @@ public class FrontQuestionControl {
 
 			 message.setCode("1");
 			 message.setMsg("游客身份只能显示15题");
+			 message.setKind("1");//表示免费用户
 			 message.setCurrPage("1");
 			 message.setSumPage("1");
 			 message.setDanxuan(danxuan);
@@ -180,6 +182,7 @@ public class FrontQuestionControl {
 
 			    	    	 message.setCode("1");
 							 message.setMsg("数据查询成功");
+							 message.setKind("2");//表示vip用户
 							 message.setDanxuan(danxuan);
 							 message.setDuoxuan(duoxuan);
 							 message.setPanduan(panduan);
@@ -219,6 +222,7 @@ public class FrontQuestionControl {
 			 			}
 						 message.setCode("1");
 						 message.setMsg("成功");
+						 message.setKind("1");//表示免费用户
 						 message.setDanxuan(danxuan);
 						 message.setDuoxuan(duoxuan);
 						 message.setPanduan(panduan);
@@ -237,8 +241,25 @@ public class FrontQuestionControl {
 		    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 3);
 		    		// 没有查找到购买记录  显示免费题目
 		    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 14,userid);
+		    		 if (data != null && data.size() > 0) {
+			 				for (int i = 0; i < data.size(); i++) {
+			 					TrainingQuestion trainingQuestion = data.get(i);
+			 					List<TrainingOption> options = trainingQuestion.getOption();
+			 					for (int j = 0; j < options.size(); j++) {
+			 						TrainingOption TrainingOption = options.get(j);
+			 						TrainingOption.setFlag("0");
+			 					}
+
+			 				}
+
+			 			}else {
+			 				
+			 				 message.setCode("0");
+							 message.setMsg("查询不到数据");
+			 			}
 					 message.setCode("1");
 					 message.setMsg("成功");
+					 message.setKind("1");//表示免费用户
 					 message.setDanxuan(danxuan);
 					 message.setDuoxuan(duoxuan);
 					 message.setPanduan(panduan);
@@ -301,11 +322,13 @@ public class FrontQuestionControl {
 			SsmSimulate ssmSimulate = new SsmSimulate ();
 			String simulateid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
 		    long  startTime = System.currentTimeMillis()/1000;	       // 考试起始时间
-		    long  endTime = startTime+1000*60*70;// 70分钟后考试时间结束
+		    long  endTime = startTime+60*70;// 70分钟后考试时间结束
 			ssmSimulate.setUserid(userid);
 			ssmSimulate.setSimulateid(simulateid);
 			ssmSimulate.setStartTime((int)startTime);
 			ssmSimulate.setEndTime((int)endTime);
+			//保存新加字段 pid
+			// ssmSimulate
 			ssmSimulateService.insertSelective(ssmSimulate);
 			
 			// 将数据放入返回值总
@@ -326,14 +349,39 @@ public class FrontQuestionControl {
 			    	long exprietime = ssmVipRecord.getExprietime();
 			    	long now = System.currentTimeMillis()/1000;
 			    	if(now<exprietime) {
+			    		// 获取随机id
+			    		Integer id =   ssmQuestionService.getRoundId() ;
+			    		
 			    		// vip 还在有效期内  显示所有题的内容
 			    		//付费 			    		
 			    		// 单选40题
-			    		List<SimulateQuestion> danxuan = ssmQuestionService.getSimulateDanxuan(userid,category_id, category_pid);
+			    		List<SimulateQuestion> danxuan = new ArrayList<SimulateQuestion>();
+			    		 danxuan = ssmQuestionService.getSimulateDanxuan(userid,category_id, category_pid,id,40);
+			    		 if(danxuan.size()<40) {
+			    			 int size = 40-danxuan.size();//不足40题的补足的数量
+			    		List<SimulateQuestion>  danxuanReverse =ssmQuestionService.getSimulateReverse(userid, category_id, category_pid, id, size, 1);
+			    		danxuan.addAll(danxuanReverse);//凑够40题
+			    		 }
+			    		
 			    		// 多选 15题
-			    		List<SimulateQuestion> duoxuan = ssmQuestionService.getSimulateDuoxuan(userid, category_id,category_pid);
-			    		// 判断30题			    		
-			    		List<SimulateQuestion> panduan = ssmQuestionService.getSimulatePanduan(userid, category_id,category_pid);
+			    		 List<SimulateQuestion> duoxuan = new ArrayList<SimulateQuestion>();
+			    		 duoxuan = ssmQuestionService.getSimulateDuoxuan(userid, category_id,category_pid,id,15);
+			    		if(duoxuan.size()<15) {
+			    			 int size = 15-danxuan.size();
+			    			List<SimulateQuestion>  duoxuanReverse =ssmQuestionService.getSimulateReverse(userid, category_id, category_pid, id, size, 2);
+			    			duoxuan.addAll(duoxuanReverse);
+			    		}
+			    		
+			    		
+			    		// 判断30题			    
+			    		List<SimulateQuestion> panduan = new ArrayList<SimulateQuestion>();
+			    		 panduan = ssmQuestionService.getSimulatePanduan(userid, category_id,category_pid,id,30);
+			    		 if(panduan.size()<30) {
+			    			 int size = 15-panduan.size();
+			    			 List<SimulateQuestion>  panduanReverse =ssmQuestionService.getSimulateReverse(userid, category_id, category_pid, id, size, 3); 
+			    			 panduan.addAll(panduanReverse);
+			    			 
+			    		 }
 			    		vo.setDanxuan(danxuan);
 			    		vo.setDuoxuan(duoxuan);
 			    		vo.setPanduan(panduan);
@@ -390,6 +438,7 @@ public class FrontQuestionControl {
 			@RequestParam(value="category_id") String category_id
 			) {		
 		  Message message = new Message ();
+		  List<simulateQuestionVo> list = new ArrayList<simulateQuestionVo>();
 		//解析 myanser 100条记录
 		List<MyanserSimulate> myanserSimulateList = JSON.parseArray(myanser, MyanserSimulate.class);
 		
@@ -417,16 +466,33 @@ public class FrontQuestionControl {
 					    		// 循环保存100条记录
 					    		for(int i=0;i<myanserSimulateList.size();i++) {
 					    			MyanserSimulate anser= myanserSimulateList.get(i);
-					    			SsmSimulateQuestion simulate = new SsmSimulateQuestion();
-					    			simulate.setSimulateid(simulateid);
+					    			simulateQuestionVo  vo = new simulateQuestionVo ();
+					    			//SsmSimulateQuestion simulate = new SsmSimulateQuestion();
+					    			/*simulate.setSimulateid(simulateid);
 					    			simulate.setQuestionid(anser.getQuestionid());
 					    			simulate.setMyanswer(anser.getMyanser());
 					    			simulate.setScore((byte)anser.getScore());
 					    			simulate.setFlag((byte)1);
-					    			ssmSimulateQuestionService.insertSelective(simulate);
+					    			ssmSimulateQuestionService.insertSelective(simulate);*/
+					    			
+					    			vo.setSimulateid(simulateid);
+					    			vo.setQuestionid(anser.getQuestionid());
+					    			vo.setMyanswer(anser.getMyanser());
+					    			vo.setScore(anser.getScore());
+					    			list.add(vo);
+					    			
 					    			sumScore=sumScore+anser.getScore();
 					    		}
 					    		
+					    	 int index =	ssmSimulateQuestionService.saveAllSimulateQuestion(list);
+					    	 if(index>0) {
+					    		 //数据保存成功 不做更改
+					    	 }else {
+					    		 message.setCode("0");
+									message.setMsg("数据保存失败");			
+									return message ;
+					    		 
+					    	 }
 					    		// 添加更新ssm_simulate 分数
 					    		SsmSimulateExample ssmSimulateExample = new SsmSimulateExample();
 					    		SsmSimulateExample.Criteria ssmSimulateExampleCriteria = ssmSimulateExample.createCriteria();
@@ -452,6 +518,10 @@ public class FrontQuestionControl {
 		message.setMsg("保存成功");
 		return message ;
 	}
+	
+	
+	
+	
 	
 	
 	

@@ -10,15 +10,32 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface SsmQuestionMapper {
+	List<SimulateQuestion>	getSimulateReverse(@Param("userid") String userid,
+			@Param("category_id") String category_id,
+			@Param("category_pid") String category_pid,
+			@Param("id") Integer id,
+			@Param("size") Integer size,
+			@Param("type") Integer type
+			);
+	 Integer getRoundId();
 	List<SimulateQuestion> getSimulateDanxuan(@Param("userid") String userid,
 			@Param("category_id") String category_id,
-			@Param("category_pid") String category_pid);
+			@Param("category_pid") String category_pid,
+			@Param("id") Integer id,
+			@Param("size") Integer size
+			);
 	List<SimulateQuestion> getSimulateDuoxuan(@Param("userid") String userid,
 			@Param("category_id") String category_id,
-			@Param("category_pid") String category_pid);
+			@Param("category_pid") String category_pid,
+			@Param("id") Integer id,
+			@Param("size") Integer size
+			);
 	List<SimulateQuestion> getSimulatePanduan(@Param("userid") String userid,
 			@Param("category_id") String category_id,
-			@Param("category_pid") String category_pid);
+			@Param("category_pid") String category_pid,
+			@Param("id") Integer id,
+			@Param("size") Integer size
+			);
 	List<SimulateQuestion>    getSimulateQuestionFree(
 			@Param("userid") String userid,
 			@Param("category_pid") String category_pid,

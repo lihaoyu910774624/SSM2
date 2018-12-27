@@ -10,6 +10,7 @@ public class TrainingQuestionListMessage {
 	private long duoxuan ;
 	private long danxuan ;
 	private long panduan ;
+	private String kind ;
 	
 	private List<TrainingQuestion> data ;
 	
@@ -19,6 +20,12 @@ public class TrainingQuestionListMessage {
 	
 	
 
+	public String getKind() {
+		return kind;
+	}
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
 	public long getDuoxuan() {
 		return duoxuan;
 	}

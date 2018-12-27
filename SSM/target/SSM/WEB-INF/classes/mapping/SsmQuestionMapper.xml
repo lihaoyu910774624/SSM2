@@ -28,7 +28,9 @@
     select count(*) from ssm_question a WHERE a.flag =1   
     and a.categoryid = #{category_pid}
     and a.subjectid = #{category_id}
-    and a.chapterid = #{chapter_id}
+    <if test='chapter_id !="0"' >
+     and a.chapterid = #{chapter_id}
+    </if>
     and a.kind =#{kind}
     and a.type = #{type}
   </select>
@@ -76,11 +78,12 @@
     <result column="title"  property="title" />
     <result column="type"  property="type" />
     <result column="correctanswer"  property="correctanswer" />
+    <result column="myanser"  property="myanser" />    
     <collection property="option" ofType="com.yuanjun.vo.FrontQuestion.TrainingOption">
       <result column="no"  property="no" />
       <result column="optionTitle"  property="optionTitle" />
       <result column="sortNo"  property="sortNo" />  
-      <result column="myanser"  property="myanser" />    
+         
     </collection>
   </resultMap>
   <select id="findTrainingQuestion" resultMap="TrainingQuestion" >
@@ -88,7 +91,8 @@
 			a.questionid questionid,
 			a.title title,
 			a.type  type,
-			a.correctanswer correctanswer,			
+			a.correctanswer correctanswer,
+						
 			b.no no ,
 			b.title optionTitle,
 			b.sort_no sortNo,
@@ -114,6 +118,7 @@
 			a.title title,
 			a.type  type,
 			a.correctanswer correctanswer,
+		   
 			b.no no ,
 			b.title optionTitle,
 			b.sort_no sortNo ,
@@ -132,6 +137,146 @@
 			LIMIT #{start},#{end} 
   
    </select>
+		   <resultMap type="com.yuanjun.vo.simulate.SimulateQuestion" id="SimulateQuestion">
+		    <result column="questionid"  property="questionid" />
+		    <result column="title"  property="title" />
+		    <result column="type"  property="type" />
+		    <result column="correctanswer"  property="correctanswer" />
+		    <collection property="option" ofType="com.yuanjun.vo.simulate.SimulateOption">
+		      <result column="no"  property="no" />
+		      <result column="optionTitle"  property="optionTitle" />
+		      <result column="sortNo"  property="sortNo" />  
+		     
+		    </collection>
+		  </resultMap>
+		  
+		
+		  
+   <select id="getSimulateQuestionFree" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo 
+			
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			
+			WHERE
+			a.flag = 1
+			and a.kind = 1			
+			and a.categoryid =#{category_pid}
+			and a.type = #{type}
+			ORDER BY a.sort_no ,b.sort_no 
+   </select>
+   <select id="getRoundId" resultType="java.lang.Integer" >
+			SELECT t1.id
+			FROM `ssm_question` AS t1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id) FROM
+			`ssm_question`)-(SELECT MIN(id) FROM `ssm_question`))+(SELECT MIN(id)
+			FROM `ssm_question`)) AS id) AS t2
+			WHERE t1.id >= t2.id
+			ORDER BY t1.id LIMIT 1;
+		  </select>
+		  <select id="getSimulateReverse" resultMap="SimulateQuestion">
+		         SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo 
+			
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			
+			WHERE
+			a.id <![CDATA[< ]]> #{id}
+			and a.flag = 1
+			and a.kind =2
+			and a.type=#{type}			
+			and a.categoryid =#{category_pid}
+			and a.subjectid= #{category_id}	
+			ORDER BY a.id DESC,a.sort_no ASC ,b.sort_no ASC
+			LIMIT #{size}
+			
+		     
+		  </select>
+    <select id="getSimulateDanxuan" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo 
+			
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			
+			WHERE
+			a.id <![CDATA[>= ]]> #{id}
+			and a.flag = 1
+			and a.kind =2
+			and a.type=1			
+			and a.categoryid =#{category_pid}
+			and a.subjectid= #{category_id}	
+			ORDER BY a.sort_no ,b.sort_no 
+			LIMIT #{size}
+   </select>
+    <select id="getSimulateDuoxuan" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo 
+			
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			
+			WHERE
+			a.id <![CDATA[>= ]]> #{id}
+			and a.flag = 1
+			and a.kind =2
+			and a.type=2			
+			and a.categoryid =#{category_pid}
+			and a.subjectid= #{category_id}	
+			ORDER BY a.sort_no ,b.sort_no 
+			LIMIT #{size}
+   </select>
+    <select id="getSimulatePanduan" resultMap="SimulateQuestion" >
+			SELECT
+			a.questionid questionid,
+			a.title title,
+			a.type  type,
+			a.correctanswer correctanswer,
+			b.no no ,
+			b.title optionTitle,
+			b.sort_no sortNo 
+			
+			FROM
+			ssm_question a LEFT JOIN  ssm_question_option b ON a.questionid = b.questionid
+			
+			WHERE
+		    a.id <![CDATA[>= ]]> #{id}
+			and a.flag = 1
+			and a.kind =2
+			and a.type=3			
+			and a.categoryid =#{category_pid}
+			and a.subjectid= #{category_id}	
+			ORDER BY a.sort_no ,b.sort_no 
+			LIMIT #{size}
+			
+   </select>
+   
+   
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">

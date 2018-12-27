@@ -6,15 +6,7 @@ public class TrainingOption {
 	private String optionTitle ;
 	private String sortNo ;
 	private String flag ;
-	private String myanser ;
 	
-	
-	public String getMyanser() {
-		return myanser;
-	}
-	public void setMyanser(String myanser) {
-		this.myanser = myanser;
-	}
 	public String getFlag() {
 		return flag;
 	}
