@@ -116,6 +116,7 @@ com\yuanjun\bean\SsmVipRecordExample.class
 com\yuanjun\service\SsmSimulateQuestionServiceImpl.class
 com\yuanjun\bean\SsmCodeExample$Criterion.class
 com\yuanjun\vo\FrontQuestion\TrainingQuestion.class
+com\yuanjun\vo\simulate\SimulateInfoMessage.class
 com\yuanjun\bean\SsmWxTokenExample.class
 com\yuanjun\bean\SsmCodeExample$GeneratedCriteria.class
 com\yuanjun\bean\SsmVipProduct.class
@@ -161,6 +162,7 @@ com\yuanjun\vo\CategoryInfo.class
 com\yuanjun\comm\AdminListMessage.class
 com\yuanjun\comm\CategoryListMessage.class
 com\yuanjun\front\wxjs\Sign.class
+com\yuanjun\vo\simulate\WrongSimulateMessage.class
 com\yuanjun\front\wxjs\WxjsConfig.class
 com\yuanjun\bean\SsmArticleExample$Criterion.class
 com\yuanjun\front\FrontQuestionControl.class
@@ -172,6 +174,7 @@ com\yuanjun\bean\SsmSimulateQuestionExample$Criteria.class
 com\yuanjun\vo\simulate\MyanserSimulate.class
 com\yuanjun\comm\ChapterMapMessage.class
 com\yuanjun\front\weixinpay\WXPayConstants$SignType.class
+com\yuanjun\vo\simulate\QuestionOption.class
 com\yuanjun\control\AdminControl.class
 com\yuanjun\front\weixinpay\WXPay.class
 com\yuanjun\front\weixinpay\WXPayReport$3.class
@@ -183,9 +186,11 @@ com\yuanjun\vo\FrontQuestion\TrainingQuestionListMessage.class
 com\yuanjun\service\SsmVipProductService.class
 com\yuanjun\bean\SsmQuestionStudyExample$Criteria.class
 com\yuanjun\service\SsmQuestionOptionServiceImpl.class
+com\yuanjun\vo\simulate\WrongSimulateVo.class
 com\yuanjun\comm\CatalogListMessage.class
 com\yuanjun\bean\SsmCategory.class
 com\yuanjun\control\VipRecordControl.class
+com\yuanjun\vo\simulate\SimulateInfo.class
 com\yuanjun\dao\SsmCodeMapper.class
 com\yuanjun\front\weixinpay\WXPayReport$ReportInfo.class
 com\yuanjun\bean\SsmQuestionExample$GeneratedCriteria.class

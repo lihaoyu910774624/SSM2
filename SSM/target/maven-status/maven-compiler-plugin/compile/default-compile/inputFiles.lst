@@ -1,3 +1,4 @@
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\SimulateInfo.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\FrontQuestion\TrainingQuestion.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\front\weixinpay\WXPayUtil.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\articlvo\ArticleTitleIdList.java
@@ -91,6 +92,7 @@ C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\frontStudy\StudyOp
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\control\QuestionStudyControl.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\front\weixinpay\WXPay.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmQuestionMapper.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\SimulateInfoMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmAdminMapper.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\front\FrontArticleControl.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\ArticleListMessage.java
@@ -113,6 +115,7 @@ C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmAdminServi
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\FrontQuestion\TrainingOption.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\SimulateQuestionListMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\CategoryInfo.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\QuestionOption.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmQuestionOptionService.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\question\QuestionDtoMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmCode.java
@@ -136,7 +139,9 @@ C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\viprecord\VipRec
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\ChapterDtoListMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmVipProductServiceImpl.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\frontRecord\RecordVo.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\WrongSimulateMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmVipRecordMapper.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\WrongSimulateVo.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\ChapterMapMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\MapMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmQuestionChapterService.java
