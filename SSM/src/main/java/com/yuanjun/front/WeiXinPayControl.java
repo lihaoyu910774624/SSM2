@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.yuanjun.bean.SsmVipBuy;
+import com.yuanjun.bean.SsmVipBuyExample;
 import com.yuanjun.bean.SsmVipProduct;
 import com.yuanjun.bean.SsmVipProductExample;
 import com.yuanjun.bean.SsmVipRecord;
@@ -42,6 +44,7 @@ import com.yuanjun.front.weixinpay.WXPayConfig;
 import com.yuanjun.front.weixinpay.WXPayUtil;
 import com.yuanjun.front.wxjs.WxjsConfig;
 import com.yuanjun.service.SsmUserService;
+import com.yuanjun.service.SsmVipBuyService;
 import com.yuanjun.service.SsmVipProductService;
 import com.yuanjun.service.SsmVipRecordService;
 import com.yuanjun.vo.UserInfo;
@@ -50,6 +53,8 @@ import com.yuanjun.vo.UserInfo;
 @RequestMapping("/WeiXinPay")
 @CrossOrigin
 public class WeiXinPayControl {
+	@Autowired
+	private SsmVipBuyService ssmVipBuyService ;
 	@Autowired
 	private SsmVipProductService ssmVipProductService ;
 	@Autowired
@@ -310,76 +315,6 @@ public class WeiXinPayControl {
 		    }
 
 		
-		
-		
-		
-		
-		
-		
-		// gengxin  recordvip
-		
-		// // attach 同type 保持一致 入库
-		
-		
-		
-		/*SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
-		SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
-		ssmVipRecordCriteria.andFlagEqualTo((byte)1);
-		ssmVipRecordCriteria.andCategorypidEqualTo(Integer.valueOf(category_pid));
-		ssmVipRecordCriteria.andCategoryidEqualTo(Integer.valueOf(category_id));
-		ssmVipRecordCriteria.andUserIdEqualTo(userid);
-		ssmVipRecordCriteria.andProductIdEqualTo(product_id);
-		List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
-		 if(ssmVipRecordList!=null&&ssmVipRecordList.size()>0) {		    	
-		    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
-		    	long exprietime = ssmVipRecord.getExprietime();
-		    	long now = System.currentTimeMillis()/1000;
-		    	if(now<exprietime) {
-		    		// vip 还在有效期内 
-		    		//判断是否有购买记录  没有超时  累加
-		    		
-		    		//购买时间
-		    		int effectdays = ssmVipProduct.getEffectdays();//有效天数
-		    		//累加过期时间
-		    		exprietime=exprietime+60*60*24*effectdays;
-		    		ssmVipRecord.setExprietime(Integer.valueOf(String.valueOf(exprietime)));
-		    		ssmVipRecordService.updateByExampleSelective(ssmVipRecord, ssmVipRecordExample);
-		    		//新增一条记录 保留付款流水信息
-		    		SsmVipRecord newRecord = new SsmVipRecord ();
-		    		newRecord.setOutTradeNo(out_trade_no);
-		    		newRecord.setUserId(userid);
-		    		newRecord.setOpenid(openid);
-		    		newRecord.setPrepayId(prepay_id);
-		    		newRecord.setCategoryid(Integer.valueOf(category_id));
-		    		newRecord.setCategorypid(Integer.valueOf(category_pid));
-		    		newRecord.setTotalFee(ssmVipProduct.getPrice());
-		    		newRecord.setProductId(product_id);
-		    		newRecord.setProductPrice(ssmVipProduct.getPrice());
-		    		newRecord
-		    		newRecord
-		    		newRecord
-		    		newRecord
-		    		
-		    	}else {
-		    		// 如果超时   新增一条数据
-		    		
-		    		
-		    		
-		    		
-		    	}
-		
-		 }else {
-			 //如果不存在充值记录 则新增一条
-			 
-			 
-			 
-			 
-		 }*/
-		
-		
-		
-		
-		
 	}
 	
 	
@@ -401,12 +336,78 @@ public class WeiXinPayControl {
 	            String out_trade_no = notifyMap.get("out_trade_no");//订单号
 
 	            if (out_trade_no == null) {
-	                logger.info("微信支付回调失败订单号: {}"+notifyMap);
+	                logger.info("微信支付回调失败: "+notifyMap);
 	                xmlBack = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>" + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
 	                return xmlBack;
 	            }
                 
 	            // 业务逻辑处理 ****************************
+	            String transaction_id = notifyMap.get("transaction_id");
+	            
+	            // 支付成功 更新  ssm_vip_record  
+	            SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+	    		SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
+	    		ssmVipRecordCriteria.andFlagEqualTo((byte)1);
+	    		ssmVipRecordCriteria.andOutTradeNoEqualTo(out_trade_no);
+	    		List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);	
+	    		SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
+	    		ssmVipRecord.setTransactionId(transaction_id);
+	    		ssmVipRecord.setIspay((byte)1);//1支付0未支付
+	    		
+	    		
+	    		SsmVipProductExample ssmVipProductExample = new SsmVipProductExample();
+	    		SsmVipProductExample.Criteria   ssmVipProductExampleCriteria = ssmVipProductExample.createCriteria();
+	    		ssmVipProductExampleCriteria.andFlagEqualTo((byte)1);
+	    		ssmVipProductExampleCriteria.andProductIdEqualTo(ssmVipRecord.getProductId());
+	    		List<SsmVipProduct> ssmVipProductList = ssmVipProductService.selectByExample(ssmVipProductExample);
+	    		SsmVipProduct	ssmVipProduct = ssmVipProductList.get(0);
+	    		int effectdays = ssmVipProduct.getEffectdays();
+	    		
+	    		long addtim = new Date().getTime()/1000;//数据库时间按秒计算 充值时间
+	    		Integer exprietime = Integer.valueOf(String.valueOf(addtim +60*60*24*effectdays))  ;
+	    		ssmVipRecord.setExprietime(exprietime);
+	    		//支付成功 更新  ssm_vip_record  
+	    		ssmVipRecordService.updateByExampleSelective(ssmVipRecord, ssmVipRecordExample);
+	    		
+	    		//ssm_vip_buy 操作  有就更新过期时间字段  没有就添加
+	    		SsmVipBuy	ssmVipBuy= ssmVipBuyService.findByUseridAndCategory(ssmVipRecord.getUserId(),
+					    				String.valueOf(ssmVipRecord.getCategoryid()),
+					    				String.valueOf(ssmVipRecord.getCategorypid()));
+	    		
+	    		if(ssmVipBuy==null) {
+	    			ssmVipBuy=new SsmVipBuy();
+	    			ssmVipBuy.setUserId(ssmVipRecord.getUserId());
+	    			ssmVipBuy.setCategoryid(Byte.valueOf(String.valueOf(ssmVipRecord.getCategoryid())));
+	    			ssmVipBuy.setCategorypid(Byte.valueOf(String.valueOf(ssmVipRecord.getCategorypid())));
+	    			ssmVipBuy.setProductId(ssmVipRecord.getProductId());
+	    			ssmVipBuy.setOutTradeNo(out_trade_no);
+	    			ssmVipBuy.setAddtime(Integer.valueOf(String.valueOf(addtim)));
+	    			ssmVipBuy.setExprietime(exprietime);
+	    			ssmVipBuyService.insertSelective(ssmVipBuy);
+	    		}else {
+	    			int oldExprietime = ssmVipBuy.getExprietime();
+	    			if(addtim<oldExprietime) {
+	    				// vip 有效 在原来的基础上增加vip时间
+	    				oldExprietime= oldExprietime+60*60*24*effectdays;
+	    				ssmVipBuy.setExprietime(oldExprietime);
+	    				ssmVipBuy.setOutTradeNo(out_trade_no);
+	    				ssmVipBuy.setProductId(ssmVipRecord.getProductId());
+	    				ssmVipBuyService.updateByPrimaryKeySelective(ssmVipBuy);
+	    			}else {
+	    				// vip 无效则更新 新的vip截止时间
+	    				ssmVipBuy.setExprietime(exprietime);
+	    				ssmVipBuy.setOutTradeNo(out_trade_no);
+	    				ssmVipBuy.setProductId(ssmVipRecord.getProductId());
+	    				ssmVipBuyService.updateByPrimaryKeySelective(ssmVipBuy);
+	    				
+	    			}
+	    			
+	    		}	
+	    			
+	    			
+	    	
+	            
+	            
 	            logger.info("微信支付回调成功订单号: {}"+notifyMap);
 	            xmlBack = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>" + "<return_msg><![CDATA[SUCCESS]]></return_msg>" + "</xml> ";
 	            return xmlBack;

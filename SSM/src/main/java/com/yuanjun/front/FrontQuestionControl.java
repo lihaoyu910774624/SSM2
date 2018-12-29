@@ -24,6 +24,7 @@ import com.yuanjun.bean.SsmSimulate;
 import com.yuanjun.bean.SsmSimulateExample;
 import com.yuanjun.bean.SsmSimulateQuestion;
 import com.yuanjun.bean.SsmSimulateQuestionExample;
+import com.yuanjun.bean.SsmVipBuy;
 import com.yuanjun.bean.SsmVipRecord;
 import com.yuanjun.bean.SsmVipRecordExample;
 import com.yuanjun.comm.Message;
@@ -33,6 +34,7 @@ import com.yuanjun.service.SsmQuestionStudyService;
 import com.yuanjun.service.SsmSimulateQuestionService;
 import com.yuanjun.service.SsmSimulateService;
 import com.yuanjun.service.SsmUserService;
+import com.yuanjun.service.SsmVipBuyService;
 import com.yuanjun.service.SsmVipRecordService;
 import com.yuanjun.vo.UserInfo;
 import com.yuanjun.vo.FrontQuestion.TrainingOption;
@@ -52,6 +54,8 @@ import com.yuanjun.vo.simulateQuestion.simulateQuestionVo;
 @RequestMapping("/FrontQuestion")
 @CrossOrigin
 public class FrontQuestionControl {
+	@Autowired
+	private SsmVipBuyService ssmVipBuyService ;	
 	@Autowired
 	private  SsmSimulateQuestionService  ssmSimulateQuestionService;
 	@Autowired
@@ -149,17 +153,19 @@ public class FrontQuestionControl {
 			 message.setData(data);
 			 return message ;
 		}else {
-			SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+			/*SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
 			SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
 			ssmVipRecordCriteria.andFlagEqualTo((byte)1);
 			ssmVipRecordCriteria.andCategoryidEqualTo(Integer.valueOf(category_id));
 			ssmVipRecordCriteria.andCategorypidEqualTo(Integer.valueOf(category_pid));
-			ssmVipRecordCriteria.andUserIdEqualTo(userid);
-			List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
-			    if(ssmVipRecordList!=null&&ssmVipRecordList.size()>0) {
+			ssmVipRecordCriteria.andUserIdEqualTo(userid);*/
+			//List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
+			SsmVipBuy	ssmVipBuy= ssmVipBuyService.findByUseridAndCategory(userid,category_id,category_pid  );
+
+			    if(ssmVipBuy!=null) {
 			    	
-			    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
-			    	long exprietime = ssmVipRecord.getExprietime();
+			    	 
+			    	long exprietime = ssmVipBuy.getExprietime();
 			    	long now = System.currentTimeMillis()/1000;
 			    	if(now<exprietime) {
 			    		// vip 还在有效期内  显示所有题的内容
@@ -344,16 +350,20 @@ public class FrontQuestionControl {
 			message.setEndTime(endTime);
 			
 		//按分类出题 判断用户是否为当前分类的付费用户
-			SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+			/*SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
 			SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
 			ssmVipRecordCriteria.andFlagEqualTo((byte)1);			
 			ssmVipRecordCriteria.andCategorypidEqualTo(Integer.valueOf(category_pid));
 			ssmVipRecordCriteria.andCategoryidEqualTo(Integer.valueOf(category_id));
 			ssmVipRecordCriteria.andUserIdEqualTo(userid);
-			List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
-			    if(ssmVipRecordList!=null&&ssmVipRecordList.size()>0) {			    	
-			    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
-			    	long exprietime = ssmVipRecord.getExprietime();
+			List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);*/
+			SsmVipBuy	ssmVipBuy= ssmVipBuyService.findByUseridAndCategory(userid,category_id,category_pid  );
+
+		   
+			
+			    if(ssmVipBuy!=null) {			    	
+			    
+			    	long exprietime = ssmVipBuy.getExprietime();
 			    	long now = System.currentTimeMillis()/1000;
 			    	if(now<exprietime) {
 			    		// 获取随机id
@@ -457,16 +467,17 @@ public class FrontQuestionControl {
 						message.setMsg("0");			
 						return message ;
 					}
-					SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+					/*SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
 					SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
 					ssmVipRecordCriteria.andFlagEqualTo((byte)1);
 					ssmVipRecordCriteria.andCategorypidEqualTo(Integer.valueOf(category_pid));
 					ssmVipRecordCriteria.andCategoryidEqualTo(Integer.valueOf(category_id));
 					ssmVipRecordCriteria.andUserIdEqualTo(userid);
-					List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);
-					    if(ssmVipRecordList!=null&&ssmVipRecordList.size()>0) {	
-					    	SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
-					    	long exprietime = ssmVipRecord.getExprietime();
+					List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);*/
+					SsmVipBuy	ssmVipBuy= ssmVipBuyService.findByUseridAndCategory(userid,category_id,category_pid  );
+					    if(ssmVipBuy!=null) {	
+					    	
+					    	long exprietime = ssmVipBuy.getExprietime();
 					    	long now = System.currentTimeMillis()/1000;
 					    	int sumScore = 0;//记录得分总数
 					    	if(now<exprietime) {

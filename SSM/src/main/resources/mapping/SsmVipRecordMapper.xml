@@ -22,6 +22,8 @@
     <result column="type" jdbcType="TINYINT" property="type" />
   </resultMap>
   
+  
+  
   <select id="getVipRecordByOutTradeNo" resultType="com.yuanjun.comm.viprecord.VipRecordDto" >
    select 
 			A.out_trade_no,
