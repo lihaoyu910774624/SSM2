@@ -1,6 +1,7 @@
 package com.yuanjun.front;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -54,6 +56,7 @@ public class WeiXinPayControl {
 	private   SsmUserService ssmUserService;
 	@Autowired
 	private SsmVipRecordService ssmVipRecordService ;
+	private static Logger logger = Logger.getLogger(WeiXinPayControl.class);  
 	@RequestMapping(value="/getOpenId", method=RequestMethod.POST)
 	@ResponseBody 
 	public MapMessage getOpenId (@RequestParam(value="code") String code) throws Exception {		
@@ -73,6 +76,7 @@ public class WeiXinPayControl {
 		sb.append(strUrl).append("appid=").append(appid).
 		   append("&secret=").append(secret).append("&code=").append(code).append("&grant_type=authorization_code");
 		URL url = new URL(sb.toString());
+		logger.info("获取openid调用地址"+url.toString());
 		//System.out.println(url.toString());
 		    HttpURLConnection httpUrlConn = (HttpURLConnection) url.openConnection();  
 	        httpUrlConn.setDoInput(true);  
@@ -94,8 +98,8 @@ public class WeiXinPayControl {
 	        inputStream.close();  
 	        inputStream = null;  	        
 	        httpUrlConn.disconnect();	       
-	        String result = buffer.toString();
-	        System.out.println(result);	        
+	        String result = buffer.toString();	      
+	        logger.info("接口调用返回结果"+result);
 	        Map maps = (Map)JSON.parse(result);
 	        if(!maps.containsKey("errcode")) {
 	        	message.setCode("1");
@@ -148,8 +152,8 @@ public class WeiXinPayControl {
 			return message ;
 		}
 		
-		 String nonce_str =WXPayUtil.generateNonceStr();
-		 String body = ssmVipProduct.getTitle();
+		        String nonce_str =WXPayUtil.generateNonceStr();
+		        String body = ssmVipProduct.getTitle();
 				MyConfig  config = new MyConfig();
 		   		Map<String,String> wxRequestData = new HashMap<String,String>();
 		        wxRequestData.put("appid", config.getAppID());// appid   WxjsConfig.APPID 
@@ -189,7 +193,7 @@ public class WeiXinPayControl {
 		       wxRequestData.put("time_start", time_start);
 		       wxRequestData.put("time_expire", time_expire);
 				//通知地址	notify_url	是	接口获取  
-		       wxRequestData.put("notify_url", "http://www.zbxlz0708:8080/SSM/WeiXinPay/getNotifyUrl.do");
+		       wxRequestData.put("notify_url", config.getNotify_url());
 				// attach 同type 保持一致
 		       wxRequestData.put("attach", type);
 		       //交易类型	trade_type	是	String(16)	JSAPI	
@@ -205,7 +209,7 @@ public class WeiXinPayControl {
 		       Map<String, String> response = new HashMap<String, String>();
 		       //准备好数据 调用统一支付接口  https://api.mch.weixin.qq.com/pay/unifiedorder  官方sdk
 		       response = wxPay.unifiedOrder(wxRequestData);
-		       
+		       logger.info("统一下单返回数据："+response);
 		       String returnCode = response.get("return_code");
 		       String resultCode = response.get("result_code");
 		       
@@ -233,10 +237,13 @@ public class WeiXinPayControl {
 		         //返参
 				// nonce_str   sign  prepay_id  二维码链接	code_url
 		       Map<String, String> data = new HashMap<String, String>();
-		       data.put("nonce_str", response.get("nonce_str"));
-		       data.put("sign", response.get("sign"));
-		       data.put("prepay_id",response.get("prepay_id") );
-		       data.put("code_url", response.get("code_url"));
+		       
+		       data.put("appId",config.getAppID());
+		       data.put("timeStamp",String.valueOf(WXPayUtil.getCurrentTimestamp()));
+		       data.put("nonceStr",WXPayUtil.generateNonceStr());
+		       data.put("package","prepay_id="+response.get("prepay_id"));
+		       data.put("signType", "MD5");
+		       data.put("paySign",WXPayUtil.generateSignature(data, config.getKey()));
 		  
 		     //新增一条记录 保留付款流水信息
 	    		SsmVipRecord newRecord = new SsmVipRecord ();
@@ -260,9 +267,55 @@ public class WeiXinPayControl {
 		return message ;
 	}
 	
-	@RequestMapping(value="/getNotifyUrl",  produces = MediaType.APPLICATION_JSON_VALUE)	
-	public  String getNotifyUrl(
-			HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value="/getNotifyUrl", method=RequestMethod.POST)	
+	@ResponseBody
+	public  String getNotifyUrl(HttpServletRequest request, HttpServletResponse response) {
+		logger.info("统一下发回调地址调用开始");
+		
+		 String resXml="";
+		 try{
+		        //
+		        InputStream is = request.getInputStream();
+		        //将InputStream转换成String
+		        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		        StringBuilder sb = new StringBuilder();
+		        String line = null;
+		        try {
+		            while ((line = reader.readLine()) != null) {
+		                sb.append(line + "\n");
+		            }
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        } finally {
+		            try {
+		                is.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        resXml=sb.toString();
+		        if (StringUtils.isBlank(resXml)) {
+					logger.error("微信支付回调通知失败,报文为空xx");
+					String xmlBack = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
+							+ "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+					return xmlBack;
+				}
+		        logger.info("微信支付异步通知请求包: {} "+ resXml);
+		        String checkRexXml = payBack(resXml);
+		        return checkRexXml ;
+		    }catch (Exception e){
+		        logger.error("微信支付回调通知失败",e);
+		        String result = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>" + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+		        return result;
+		    }
+
+		
+		
+		
+		
+		
+		
+		
 		// gengxin  recordvip
 		
 		// // attach 同type 保持一致 入库
@@ -326,8 +379,50 @@ public class WeiXinPayControl {
 		
 		
 		
-		return "";
+		
 	}
+	
+	
+	public String payBack(String notifyData) {
+	    logger.info("payBack() start, notifyData={}"+notifyData);
+	    String xmlBack="";
+	    Map<String, String> notifyMap = null;
+	    try {
+	    	
+	    	MyConfig  iWxPayConfig = new MyConfig();
+	        WXPay wxpay = new WXPay(iWxPayConfig);
+           
+	        notifyMap = WXPayUtil.xmlToMap(notifyData);         // 转换成map
+	        if (wxpay.isPayResultNotifySignatureValid(notifyMap)) {
+	            // 签名正确
+	            // 进行处理。
+	            // 注意特殊情况：订单已经退款，但收到了支付结果成功的通知，不应把商户侧订单状态从退款改成支付成功
+	            String return_code = notifyMap.get("return_code");//状态
+	            String out_trade_no = notifyMap.get("out_trade_no");//订单号
+
+	            if (out_trade_no == null) {
+	                logger.info("微信支付回调失败订单号: {}"+notifyMap);
+	                xmlBack = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>" + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+	                return xmlBack;
+	            }
+                
+	            // 业务逻辑处理 ****************************
+	            logger.info("微信支付回调成功订单号: {}"+notifyMap);
+	            xmlBack = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>" + "<return_msg><![CDATA[SUCCESS]]></return_msg>" + "</xml> ";
+	            return xmlBack;
+	        } else {
+	            logger.error("微信支付回调通知签名错误");
+	            xmlBack = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>" + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+	            return xmlBack;
+	        }
+	    } catch (Exception e) {
+	        logger.error("微信支付回调通知失败",e);
+	        xmlBack = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>" + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+	    }
+	    return xmlBack;
+	}
+
+	
 
 	
 

@@ -470,7 +470,7 @@ public class FrontQuestionControl {
 					    	long now = System.currentTimeMillis()/1000;
 					    	int sumScore = 0;//记录得分总数
 					    	if(now<exprietime) {
-					    		// 循环保存100条记录
+					    		// 保存100条记录
 					    		for(int i=0;i<myanserSimulateList.size();i++) {
 					    			MyanserSimulate anser= myanserSimulateList.get(i);
 					    			simulateQuestionVo  vo = new simulateQuestionVo ();
@@ -490,7 +490,7 @@ public class FrontQuestionControl {
 					    			
 					    			sumScore=sumScore+anser.getScore();
 					    		}
-					    		
+					    		//批量保存
 					    	 int index =	ssmSimulateQuestionService.saveAllSimulateQuestion(list);
 					    	 if(index>0) {
 					    		 //数据保存成功 不做更改
@@ -563,9 +563,9 @@ public class FrontQuestionControl {
 		SsmSimulateExample.Criteria ssmSimulateExampleCriteria = ssmSimulateExample.createCriteria();
 		ssmSimulateExampleCriteria.andUseridEqualTo(userid);
 		ssmSimulateExampleCriteria.andSimulateidEqualTo(simulateid);
-		
+		ssmSimulateExampleCriteria.andFlagEqualTo((byte)1);
 		List<SsmSimulate> ssmSimulateList =   ssmSimulateService.selectByExample(ssmSimulateExample);
-		List<WrongSimulateVo> data = new ArrayList<>();
+		List<WrongSimulateVo> data = new ArrayList<WrongSimulateVo>();
 		if(ssmSimulateList!=null&&ssmSimulateList.size()>0) {
 			
 		 data= ssmSimulateQuestionService.getWrongSimulate(simulateid);

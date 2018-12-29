@@ -54,6 +54,7 @@ com\yuanjun\bean\SsmCategoryExample$Criteria.class
 com\yuanjun\bean\SsmVipRecord.class
 com\yuanjun\dao\SsmQuestionStudyMapper.class
 com\yuanjun\front\wxjs\SHA1.class
+com\yuanjun\front\weixinpay\MyConfig$1.class
 com\yuanjun\bean\SsmSimulateQuestionExample$Criterion.class
 com\yuanjun\bean\SsmUserExample$GeneratedCriteria.class
 com\yuanjun\bean\SsmQuestionStudyExample$Criterion.class
@@ -118,6 +119,7 @@ com\yuanjun\bean\SsmCodeExample$Criterion.class
 com\yuanjun\vo\FrontQuestion\TrainingQuestion.class
 com\yuanjun\vo\simulate\SimulateInfoMessage.class
 com\yuanjun\bean\SsmWxTokenExample.class
+com\yuanjun\comm\ipUtil\IpUtil.class
 com\yuanjun\bean\SsmCodeExample$GeneratedCriteria.class
 com\yuanjun\bean\SsmVipProduct.class
 com\yuanjun\bean\SsmCategoryExample.class

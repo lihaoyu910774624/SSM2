@@ -19,7 +19,10 @@ public class MyConfig extends WXPayConfig{
         certStream.read(this.certData);
         certStream.close();*/
     }
- 
+    
+    public String getNotify_url() {
+        return "http://www.zbxlz0708.com:8080/SSM/WeiXinPay/getNotifyUrl.do";
+    }
     public String getAppID() {
         return "wxe82d18c4c4bf00da";
     }

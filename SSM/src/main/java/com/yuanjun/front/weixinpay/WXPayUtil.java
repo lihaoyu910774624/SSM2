@@ -197,7 +197,7 @@ public class WXPayUtil {
      */
     public static String generateSignature(final Map<String, String> data, String key, SignType signType) throws Exception {
         Set<String> keySet = data.keySet();
-        String[] keyArray = keySet.toArray(new String[keySet.size()]);
+        String[] keyArray  = keySet.toArray(new String[keySet.size()]);
         Arrays.sort(keyArray);
         StringBuilder sb = new StringBuilder();
         for (String k : keyArray) {
@@ -207,7 +207,9 @@ public class WXPayUtil {
             if (data.get(k).trim().length() > 0) // 参数值为空，则不参与签名
                 sb.append(k).append("=").append(data.get(k).trim()).append("&");
         }
+       
         sb.append("key=").append(key);
+    
         if (SignType.MD5.equals(signType)) {
             return MD5(sb.toString()).toUpperCase();
         }

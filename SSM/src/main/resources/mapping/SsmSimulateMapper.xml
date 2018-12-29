@@ -19,7 +19,9 @@
 	 a.simulateid simulateid
 	 from ssm_simulate a LEFT JOIN
 	ssm_category b ON a.category_pid=b.id
-	 where a.userid=#{userid} ORDER BY a.start_time DESC
+	 where a.userid=#{userid}
+	 and  a.flag = 1 
+	 ORDER BY a.start_time DESC
 	 ;
   
   </select>
