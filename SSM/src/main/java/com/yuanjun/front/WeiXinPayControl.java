@@ -328,6 +328,7 @@ public class WeiXinPayControl {
 	        WXPay wxpay = new WXPay(iWxPayConfig);
            
 	        notifyMap = WXPayUtil.xmlToMap(notifyData);         // 转换成map
+	        
 	        if (wxpay.isPayResultNotifySignatureValid(notifyMap)) {
 	            // 签名正确
 	            // 进行处理。
