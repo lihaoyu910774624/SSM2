@@ -19,8 +19,8 @@
     <result column="exprietime" jdbcType="INTEGER" property="exprietime" />
     <result column="payexprietime" jdbcType="INTEGER" property="payexprietime" />
     <result column="flag" jdbcType="TINYINT" property="flag" />
+    <result column="type" jdbcType="TINYINT" property="type" />
   </resultMap>
-  
   
   <select id="getVipRecordByOutTradeNo" resultType="com.yuanjun.comm.viprecord.VipRecordDto" >
    select 
@@ -138,14 +138,10 @@
       </foreach>
     </where>
   </sql>
-  
-  
-  
-  
   <sql id="Base_Column_List">
     id, out_trade_no, user_id, openid, transaction_id, prepay_id, categoryid, categorypid, 
     total_fee, product_id, product_price, ispay, addtime, paytime, exprietime, payexprietime, 
-    flag
+    flag, type
   </sql>
   <select id="selectByExample" parameterType="com.yuanjun.bean.SsmVipRecordExample" resultMap="BaseResultMap">
     select
@@ -183,13 +179,15 @@
       categoryid, categorypid, total_fee, 
       product_id, product_price, ispay, 
       addtime, paytime, exprietime, 
-      payexprietime, flag)
+      payexprietime, flag, type
+      )
     values (#{id,jdbcType=INTEGER}, #{outTradeNo,jdbcType=CHAR}, #{userId,jdbcType=CHAR}, 
       #{openid,jdbcType=VARCHAR}, #{transactionId,jdbcType=CHAR}, #{prepayId,jdbcType=CHAR}, 
       #{categoryid,jdbcType=INTEGER}, #{categorypid,jdbcType=INTEGER}, #{totalFee,jdbcType=INTEGER}, 
       #{productId,jdbcType=CHAR}, #{productPrice,jdbcType=INTEGER}, #{ispay,jdbcType=TINYINT}, 
       #{addtime,jdbcType=TIMESTAMP}, #{paytime,jdbcType=TIMESTAMP}, #{exprietime,jdbcType=INTEGER}, 
-      #{payexprietime,jdbcType=INTEGER}, #{flag,jdbcType=TINYINT})
+      #{payexprietime,jdbcType=INTEGER}, #{flag,jdbcType=TINYINT}, #{type,jdbcType=TINYINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmVipRecord">
     insert into ssm_vip_record
@@ -245,6 +243,9 @@
       <if test="flag != null">
         flag,
       </if>
+      <if test="type != null">
+        type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -297,6 +298,9 @@
       </if>
       <if test="flag != null">
         #{flag,jdbcType=TINYINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -360,6 +364,9 @@
       <if test="record.flag != null">
         flag = #{record.flag,jdbcType=TINYINT},
       </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=TINYINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -383,7 +390,8 @@
       paytime = #{record.paytime,jdbcType=TIMESTAMP},
       exprietime = #{record.exprietime,jdbcType=INTEGER},
       payexprietime = #{record.payexprietime,jdbcType=INTEGER},
-      flag = #{record.flag,jdbcType=TINYINT}
+      flag = #{record.flag,jdbcType=TINYINT},
+      type = #{record.type,jdbcType=TINYINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -439,6 +447,9 @@
       <if test="flag != null">
         flag = #{flag,jdbcType=TINYINT},
       </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -459,7 +470,8 @@
       paytime = #{paytime,jdbcType=TIMESTAMP},
       exprietime = #{exprietime,jdbcType=INTEGER},
       payexprietime = #{payexprietime,jdbcType=INTEGER},
-      flag = #{flag,jdbcType=TINYINT}
+      flag = #{flag,jdbcType=TINYINT},
+      type = #{type,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -2,79 +2,84 @@ package com.yuanjun.bean;
 
 import java.util.Date;
 
-public class SsmVipProduct
-{
-  private Byte id;
-  private String productId;
-  private String title;
-  private Integer price;
-  private Integer effectdays;
-  private Byte sortNo;
-  private Date addtime;
-  private Byte flag;
+public class SsmVipProduct {
+    private Byte id;
 
-  public Byte getId()
-  {
-    return this.id;
-  }
+    private String productId;
 
-  public void setId(Byte id) {
-    this.id = id;
-  }
+    private String title;
 
-  public String getProductId() {
-    return this.productId;
-  }
+    private Integer price;
 
-  public void setProductId(String productId) {
-    this.productId = (productId == null ? null : productId.trim());
-  }
+    private Integer effectdays;
 
-  public String getTitle() {
-    return this.title;
-  }
+    private Byte sortNo;
 
-  public void setTitle(String title) {
-    this.title = (title == null ? null : title.trim());
-  }
+    private Date addtime;
 
-  public Integer getPrice() {
-    return this.price;
-  }
+    private Byte flag;
 
-  public void setPrice(Integer price) {
-    this.price = price;
-  }
+    public Byte getId() {
+        return id;
+    }
 
-  public Integer getEffectdays() {
-    return this.effectdays;
-  }
+    public void setId(Byte id) {
+        this.id = id;
+    }
 
-  public void setEffectdays(Integer effectdays) {
-    this.effectdays = effectdays;
-  }
+    public String getProductId() {
+        return productId;
+    }
 
-  public Byte getSortNo() {
-    return this.sortNo;
-  }
+    public void setProductId(String productId) {
+        this.productId = productId == null ? null : productId.trim();
+    }
 
-  public void setSortNo(Byte sortNo) {
-    this.sortNo = sortNo;
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  public Date getAddtime() {
-    return this.addtime;
-  }
+    public void setTitle(String title) {
+        this.title = title == null ? null : title.trim();
+    }
 
-  public void setAddtime(Date addtime) {
-    this.addtime = addtime;
-  }
+    public Integer getPrice() {
+        return price;
+    }
 
-  public Byte getFlag() {
-    return this.flag;
-  }
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
 
-  public void setFlag(Byte flag) {
-    this.flag = flag;
-  }
+    public Integer getEffectdays() {
+        return effectdays;
+    }
+
+    public void setEffectdays(Integer effectdays) {
+        this.effectdays = effectdays;
+    }
+
+    public Byte getSortNo() {
+        return sortNo;
+    }
+
+    public void setSortNo(Byte sortNo) {
+        this.sortNo = sortNo;
+    }
+
+    public Date getAddtime() {
+        return addtime;
+    }
+
+    public void setAddtime(Date addtime) {
+        this.addtime = addtime;
+    }
+
+    public Byte getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Byte flag) {
+        this.flag = flag;
+    }
 }

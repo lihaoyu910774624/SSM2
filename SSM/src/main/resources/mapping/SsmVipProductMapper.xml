@@ -7,6 +7,7 @@
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="price" jdbcType="INTEGER" property="price" />
     <result column="effectdays" jdbcType="INTEGER" property="effectdays" />
+    <result column="sort_no" jdbcType="TINYINT" property="sortNo" />
     <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
     <result column="flag" jdbcType="TINYINT" property="flag" />
   </resultMap>
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, product_id, title, price, effectdays, addtime, flag
+    id, product_id, title, price, effectdays, sort_no, addtime, flag
   </sql>
   <select id="selectByExample" parameterType="com.yuanjun.bean.SsmVipProductExample" resultMap="BaseResultMap">
     select
@@ -91,11 +92,6 @@
     from ssm_vip_product
     where id = #{id,jdbcType=TINYINT}
   </select>
-   <select id="findAll"  resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from ssm_vip_product    
-  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Byte">
     delete from ssm_vip_product
     where id = #{id,jdbcType=TINYINT}
@@ -108,11 +104,11 @@
   </delete>
   <insert id="insert" parameterType="com.yuanjun.bean.SsmVipProduct">
     insert into ssm_vip_product (id, product_id, title, 
-      price, effectdays, addtime, 
-      flag)
+      price, effectdays, sort_no, 
+      addtime, flag)
     values (#{id,jdbcType=TINYINT}, #{productId,jdbcType=CHAR}, #{title,jdbcType=VARCHAR}, 
-      #{price,jdbcType=INTEGER}, #{effectdays,jdbcType=TINYINT}, #{addtime,jdbcType=TIMESTAMP}, 
-      #{flag,jdbcType=TINYINT})
+      #{price,jdbcType=INTEGER}, #{effectdays,jdbcType=INTEGER}, #{sortNo,jdbcType=TINYINT}, 
+      #{addtime,jdbcType=TIMESTAMP}, #{flag,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmVipProduct">
     insert into ssm_vip_product
@@ -131,6 +127,9 @@
       </if>
       <if test="effectdays != null">
         effectdays,
+      </if>
+      <if test="sortNo != null">
+        sort_no,
       </if>
       <if test="addtime != null">
         addtime,
@@ -153,7 +152,10 @@
         #{price,jdbcType=INTEGER},
       </if>
       <if test="effectdays != null">
-        #{effectdays,jdbcType=TINYINT},
+        #{effectdays,jdbcType=INTEGER},
+      </if>
+      <if test="sortNo != null">
+        #{sortNo,jdbcType=TINYINT},
       </if>
       <if test="addtime != null">
         #{addtime,jdbcType=TIMESTAMP},
@@ -185,7 +187,10 @@
         price = #{record.price,jdbcType=INTEGER},
       </if>
       <if test="record.effectdays != null">
-        effectdays = #{record.effectdays,jdbcType=TINYINT},
+        effectdays = #{record.effectdays,jdbcType=INTEGER},
+      </if>
+      <if test="record.sortNo != null">
+        sort_no = #{record.sortNo,jdbcType=TINYINT},
       </if>
       <if test="record.addtime != null">
         addtime = #{record.addtime,jdbcType=TIMESTAMP},
@@ -204,7 +209,8 @@
       product_id = #{record.productId,jdbcType=CHAR},
       title = #{record.title,jdbcType=VARCHAR},
       price = #{record.price,jdbcType=INTEGER},
-      effectdays = #{record.effectdays,jdbcType=TINYINT},
+      effectdays = #{record.effectdays,jdbcType=INTEGER},
+      sort_no = #{record.sortNo,jdbcType=TINYINT},
       addtime = #{record.addtime,jdbcType=TIMESTAMP},
       flag = #{record.flag,jdbcType=TINYINT}
     <if test="_parameter != null">
@@ -224,7 +230,10 @@
         price = #{price,jdbcType=INTEGER},
       </if>
       <if test="effectdays != null">
-        effectdays = #{effectdays,jdbcType=TINYINT},
+        effectdays = #{effectdays,jdbcType=INTEGER},
+      </if>
+      <if test="sortNo != null">
+        sort_no = #{sortNo,jdbcType=TINYINT},
       </if>
       <if test="addtime != null">
         addtime = #{addtime,jdbcType=TIMESTAMP},
@@ -240,7 +249,8 @@
     set product_id = #{productId,jdbcType=CHAR},
       title = #{title,jdbcType=VARCHAR},
       price = #{price,jdbcType=INTEGER},
-      effectdays = #{effectdays,jdbcType=TINYINT},
+      effectdays = #{effectdays,jdbcType=INTEGER},
+      sort_no = #{sortNo,jdbcType=TINYINT},
       addtime = #{addtime,jdbcType=TIMESTAMP},
       flag = #{flag,jdbcType=TINYINT}
     where id = #{id,jdbcType=TINYINT}

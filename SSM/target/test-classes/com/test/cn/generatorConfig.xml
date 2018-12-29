@@ -65,6 +65,13 @@
 			 <table
 			tableName="ssm_simulate"
 			domainObjectName="SsmSimulate"></table>
+			<table
+			tableName="ssm_vip_record"
+			domainObjectName="SsmVipRecord"></table>
+			<table
+			tableName="ssm_vip_product"
+			domainObjectName="SsmVipProduct"></table>
+			
 			
 		<!-- table指定每个表的生成策略 -->
 		

@@ -37,6 +37,8 @@ public class SsmVipRecord {
 
     private Byte flag;
 
+    private Byte type;
+
     public Integer getId() {
         return id;
     }
@@ -171,5 +173,13 @@ public class SsmVipRecord {
 
     public void setFlag(Byte flag) {
         this.flag = flag;
+    }
+
+    public Byte getType() {
+        return type;
+    }
+
+    public void setType(Byte type) {
+        this.type = type;
     }
 }

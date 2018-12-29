@@ -5,27 +5,26 @@ import com.yuanjun.bean.SsmVipProductExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
-public abstract interface SsmVipProductMapper
-{
-  public abstract long countByExample(SsmVipProductExample paramSsmVipProductExample);
+public interface SsmVipProductMapper {
+    long countByExample(SsmVipProductExample example);
 
-  public abstract int deleteByExample(SsmVipProductExample paramSsmVipProductExample);
+    int deleteByExample(SsmVipProductExample example);
 
-  public abstract int deleteByPrimaryKey(Byte paramByte);
+    int deleteByPrimaryKey(Byte id);
 
-  public abstract int insert(SsmVipProduct paramSsmVipProduct);
+    int insert(SsmVipProduct record);
 
-  public abstract int insertSelective(SsmVipProduct paramSsmVipProduct);
+    int insertSelective(SsmVipProduct record);
 
-  public abstract List<SsmVipProduct> selectByExample(SsmVipProductExample paramSsmVipProductExample);
+    List<SsmVipProduct> selectByExample(SsmVipProductExample example);
 
-  public abstract SsmVipProduct selectByPrimaryKey(Byte paramByte);
+    SsmVipProduct selectByPrimaryKey(Byte id);
 
-  public abstract int updateByExampleSelective(@Param("record") SsmVipProduct paramSsmVipProduct, @Param("example") SsmVipProductExample paramSsmVipProductExample);
+    int updateByExampleSelective(@Param("record") SsmVipProduct record, @Param("example") SsmVipProductExample example);
 
-  public abstract int updateByExample(@Param("record") SsmVipProduct paramSsmVipProduct, @Param("example") SsmVipProductExample paramSsmVipProductExample);
+    int updateByExample(@Param("record") SsmVipProduct record, @Param("example") SsmVipProductExample example);
 
-  public abstract int updateByPrimaryKeySelective(SsmVipProduct paramSsmVipProduct);
+    int updateByPrimaryKeySelective(SsmVipProduct record);
 
-  public abstract int updateByPrimaryKey(SsmVipProduct paramSsmVipProduct);
+    int updateByPrimaryKey(SsmVipProduct record);
 }

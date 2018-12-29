@@ -8,9 +8,11 @@
     <result column="start_time" jdbcType="INTEGER" property="startTime" />
     <result column="end_time" jdbcType="INTEGER" property="endTime" />
     <result column="score" jdbcType="INTEGER" property="score" />
-    <result column="flag" jdbcType="TINYINT" property="flag" />
     <result column="category_pid" jdbcType="TINYINT" property="categoryPid" />
+    <result column="submit" jdbcType="TINYINT" property="submit" />
+    <result column="flag" jdbcType="TINYINT" property="flag" />
   </resultMap>
+  
   <select id="getSimulateInfo"  resultType="com.yuanjun.vo.simulate.SimulateInfo">
 	select b.title title,
 	 a.start_time start_time,
@@ -80,7 +82,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, userid, simulateid, start_time, end_time, score, flag, category_pid
+    id, userid, simulateid, start_time, end_time, score, category_pid, submit, flag
   </sql>
   <select id="selectByExample" parameterType="com.yuanjun.bean.SsmSimulateExample" resultMap="BaseResultMap">
     select
@@ -115,10 +117,12 @@
   <insert id="insert" parameterType="com.yuanjun.bean.SsmSimulate">
     insert into ssm_simulate (id, userid, simulateid, 
       start_time, end_time, score, 
-      flag, category_pid)
+      category_pid, submit, flag
+      )
     values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=CHAR}, #{simulateid,jdbcType=CHAR}, 
       #{startTime,jdbcType=INTEGER}, #{endTime,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, 
-      #{flag,jdbcType=TINYINT}, #{categoryPid,jdbcType=TINYINT})
+      #{categoryPid,jdbcType=TINYINT}, #{submit,jdbcType=TINYINT}, #{flag,jdbcType=TINYINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.yuanjun.bean.SsmSimulate">
     insert into ssm_simulate
@@ -141,11 +145,14 @@
       <if test="score != null">
         score,
       </if>
-      <if test="flag != null">
-        flag,
-      </if>
       <if test="categoryPid != null">
         category_pid,
+      </if>
+      <if test="submit != null">
+        submit,
+      </if>
+      <if test="flag != null">
+        flag,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -167,11 +174,14 @@
       <if test="score != null">
         #{score,jdbcType=INTEGER},
       </if>
-      <if test="flag != null">
-        #{flag,jdbcType=TINYINT},
-      </if>
       <if test="categoryPid != null">
         #{categoryPid,jdbcType=TINYINT},
+      </if>
+      <if test="submit != null">
+        #{submit,jdbcType=TINYINT},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -202,11 +212,14 @@
       <if test="record.score != null">
         score = #{record.score,jdbcType=INTEGER},
       </if>
-      <if test="record.flag != null">
-        flag = #{record.flag,jdbcType=TINYINT},
-      </if>
       <if test="record.categoryPid != null">
         category_pid = #{record.categoryPid,jdbcType=TINYINT},
+      </if>
+      <if test="record.submit != null">
+        submit = #{record.submit,jdbcType=TINYINT},
+      </if>
+      <if test="record.flag != null">
+        flag = #{record.flag,jdbcType=TINYINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -221,8 +234,9 @@
       start_time = #{record.startTime,jdbcType=INTEGER},
       end_time = #{record.endTime,jdbcType=INTEGER},
       score = #{record.score,jdbcType=INTEGER},
-      flag = #{record.flag,jdbcType=TINYINT},
-      category_pid = #{record.categoryPid,jdbcType=TINYINT}
+      category_pid = #{record.categoryPid,jdbcType=TINYINT},
+      submit = #{record.submit,jdbcType=TINYINT},
+      flag = #{record.flag,jdbcType=TINYINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -245,11 +259,14 @@
       <if test="score != null">
         score = #{score,jdbcType=INTEGER},
       </if>
-      <if test="flag != null">
-        flag = #{flag,jdbcType=TINYINT},
-      </if>
       <if test="categoryPid != null">
         category_pid = #{categoryPid,jdbcType=TINYINT},
+      </if>
+      <if test="submit != null">
+        submit = #{submit,jdbcType=TINYINT},
+      </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=TINYINT},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -261,8 +278,9 @@
       start_time = #{startTime,jdbcType=INTEGER},
       end_time = #{endTime,jdbcType=INTEGER},
       score = #{score,jdbcType=INTEGER},
-      flag = #{flag,jdbcType=TINYINT},
-      category_pid = #{categoryPid,jdbcType=TINYINT}
+      category_pid = #{categoryPid,jdbcType=TINYINT},
+      submit = #{submit,jdbcType=TINYINT},
+      flag = #{flag,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -13,9 +13,11 @@ public class SsmSimulate {
 
     private Integer score;
 
-    private Byte flag;
-
     private Byte categoryPid;
+
+    private Byte submit;
+
+    private Byte flag;
 
     public Integer getId() {
         return id;
@@ -65,19 +67,27 @@ public class SsmSimulate {
         this.score = score;
     }
 
-    public Byte getFlag() {
-        return flag;
-    }
-
-    public void setFlag(Byte flag) {
-        this.flag = flag;
-    }
-
     public Byte getCategoryPid() {
         return categoryPid;
     }
 
     public void setCategoryPid(Byte categoryPid) {
         this.categoryPid = categoryPid;
+    }
+
+    public Byte getSubmit() {
+        return submit;
+    }
+
+    public void setSubmit(Byte submit) {
+        this.submit = submit;
+    }
+
+    public Byte getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Byte flag) {
+        this.flag = flag;
     }
 }

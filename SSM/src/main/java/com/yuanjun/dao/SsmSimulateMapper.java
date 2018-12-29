@@ -8,8 +8,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface SsmSimulateMapper {
-	
-	 List<SimulateInfo>   getSimulateInfo(@Param("userid") String userid);
+	List<SimulateInfo>   getSimulateInfo(@Param("userid") String userid);
     long countByExample(SsmSimulateExample example);
 
     int deleteByExample(SsmSimulateExample example);
