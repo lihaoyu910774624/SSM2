@@ -85,6 +85,7 @@ C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmUserServic
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\QuestionOptionListMessage.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmQuestionChapter.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmQuestionStudyMapper.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmVipBuyService.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\front\Subject.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\QuestionVo.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmArticle.java
@@ -100,10 +101,12 @@ C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\ArticleListMessa
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\control\VipRecordControl.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmArticleMapper.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\SimulateQuestion.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmVipBuyExample.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmCodeMapper.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmUserExample.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmCityServiceImpl.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmWxTokenServiceImpl.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmVipBuy.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\ArticlAllInfo.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\control\QuestionControl.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmVipProduct.java
@@ -119,6 +122,7 @@ C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\CategoryInfo.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulate\QuestionOption.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmQuestionOptionService.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\question\QuestionDtoMessage.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmVipBuyMapper.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmCode.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\bean\SsmCity.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmQuestionOptionServiceImpl.java
@@ -162,6 +166,7 @@ C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\control\QuestionChapt
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\Message.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\comm\PhoneVadation.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\dao\SsmCityMapper.java
+C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmVipBuyServiceImpl.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmSimulateQuestionService.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\vo\simulateQuestion\simulateQuestionVo.java
 C:\Users\lhy\git\repository5\SSM\src\main\java\com\yuanjun\service\SsmVipRecordServiceImpl.java

@@ -10,6 +10,7 @@ com\yuanjun\vo\UserInfo.class
 com\yuanjun\front\FrontRecordControl.class
 com\yuanjun\bean\SsmAdminExample$Criteria.class
 com\yuanjun\bean\SsmQuestionChapterExample$Criteria.class
+com\yuanjun\bean\SsmVipBuyExample$GeneratedCriteria.class
 com\yuanjun\vo\articlvo\ArticleAllListMessage.class
 com\yuanjun\vo\frontStudy\StudyQuestion.class
 com\yuanjun\comm\MapMessage.class
@@ -27,6 +28,7 @@ com\yuanjun\dao\SsmQuestionOptionMapper.class
 com\yuanjun\service\SsmWxTokenServiceImpl.class
 com\yuanjun\bean\SsmQuestionExample$Criterion.class
 com\yuanjun\bean\SsmSimulateExample.class
+com\yuanjun\bean\SsmVipBuy.class
 com\yuanjun\service\SsmUserServiceImpl.class
 com\yuanjun\service\SsmCityServiceImpl.class
 com\yuanjun\bean\SsmWxTokenExample$GeneratedCriteria.class
@@ -46,6 +48,7 @@ com\yuanjun\dao\SsmVipProductMapper.class
 com\yuanjun\vo\front\Subject.class
 com\yuanjun\vo\QuestionInfo.class
 com\yuanjun\bean\SsmQuestionOption.class
+com\yuanjun\service\SsmVipBuyServiceImpl.class
 com\yuanjun\vo\front\Chapter.class
 com\yuanjun\bean\SsmCode.class
 com\yuanjun\bean\SsmSimulateExample$GeneratedCriteria.class
@@ -53,6 +56,7 @@ com\yuanjun\bean\SsmArticleExample.class
 com\yuanjun\bean\SsmCategoryExample$Criteria.class
 com\yuanjun\bean\SsmVipRecord.class
 com\yuanjun\dao\SsmQuestionStudyMapper.class
+com\yuanjun\service\SsmVipBuyService.class
 com\yuanjun\front\wxjs\SHA1.class
 com\yuanjun\front\weixinpay\MyConfig$1.class
 com\yuanjun\bean\SsmSimulateQuestionExample$Criterion.class
@@ -110,6 +114,7 @@ com\yuanjun\bean\SsmWxTokenExample$Criteria.class
 com\yuanjun\service\SsmArticleServiceImpl.class
 com\yuanjun\comm\ChapterListMessage.class
 com\yuanjun\vo\frontStudy\AnserDto.class
+com\yuanjun\bean\SsmVipBuyExample.class
 com\yuanjun\comm\ProductListMessage.class
 com\yuanjun\comm\viprecord\VipRecordDtoMessage.class
 com\yuanjun\comm\QuestionPageListMessage.class
@@ -119,15 +124,18 @@ com\yuanjun\bean\SsmCodeExample$Criterion.class
 com\yuanjun\vo\FrontQuestion\TrainingQuestion.class
 com\yuanjun\vo\simulate\SimulateInfoMessage.class
 com\yuanjun\bean\SsmWxTokenExample.class
+com\yuanjun\bean\SsmVipBuyExample$Criteria.class
 com\yuanjun\comm\ipUtil\IpUtil.class
 com\yuanjun\bean\SsmCodeExample$GeneratedCriteria.class
 com\yuanjun\bean\SsmVipProduct.class
 com\yuanjun\bean\SsmCategoryExample.class
+com\yuanjun\dao\SsmVipBuyMapper.class
 com\yuanjun\vo\frontRecord\RecordVo.class
 com\yuanjun\vo\question\QuestionDto.class
 com\yuanjun\vo\ArticlAllInfo.class
 com\yuanjun\bean\SsmCodeExample.class
 com\yuanjun\dao\SsmQuestionMapper.class
+com\yuanjun\bean\SsmVipBuyExample$Criterion.class
 com\yuanjun\dao\SsmUserMapper.class
 com\yuanjun\vo\QuestionVo.class
 com\yuanjun\bean\SsmUserExample$Criteria.class

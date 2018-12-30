@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -130,8 +131,8 @@ public class WeiXinPayControl {
 			@RequestParam(value="product_id") String product_id,
 			@RequestParam(value="category_pid" ,defaultValue="") String category_pid,
 			@RequestParam(value="category_id") String category_id,
-			@RequestParam(value="openid") String openid,
-			@RequestParam(value="type") String type //支付方式
+			@RequestParam(value="openid",defaultValue="") String openid,
+			@RequestParam(value="type",defaultValue="") String type //支付方式
 			
 			) throws Exception{
 		MapMessage message = new MapMessage();
@@ -142,6 +143,21 @@ public class WeiXinPayControl {
 			message.setMsg("0");			
 			return message ;
 		}
+		if(StringUtils.isNotBlank(type)) {
+			List<String>  typeList = new ArrayList<String>();
+			typeList.add("1");
+			typeList.add("2");
+			if(!typeList.contains(type) ){
+				
+				message.setCode("0");
+				message.setMsg("0");			
+				return message ;
+				
+			}
+			
+			
+		}
+		
 		// 产品校验  product_id 
 		SsmVipProductExample ssmVipProductExample = new SsmVipProductExample();
 		SsmVipProductExample.Criteria   ssmVipProductExampleCriteria = ssmVipProductExample.createCriteria();
@@ -201,12 +217,26 @@ public class WeiXinPayControl {
 		       wxRequestData.put("notify_url", config.getNotify_url());
 				// attach 同type 保持一致
 		       wxRequestData.put("attach", type);
-		       //交易类型	trade_type	是	String(16)	JSAPI	
-		       wxRequestData.put("trade_type", "JSAPI");
+		       if("1".equals(type)) {
+		    	 //交易类型	trade_type	是	String(16)	JSAPI	
+			       wxRequestData.put("trade_type", "JSAPI");
+		    	   
+		       }else {
+		    	   
+		    	 //交易类型	trade_type	是	MWEB  微信扫码支付	
+			       wxRequestData.put("trade_type", "MWEB"); 
+		    	   
+		       }
+		       
                //商品ID	product_id	否	String(32)	12235413214070356458058	
 		       wxRequestData.put("product_id", ssmVipProduct.getProductId());
 		       // openid 入参
-		       wxRequestData.put("openid", openid);
+		       if(StringUtils.isNotBlank(openid)) {
+		    	   // 扫码支付时不需要此参数 可以不用组此数据
+		    	   wxRequestData.put("openid", openid);
+		    	   
+		       }
+		      
 		       
 		      
 		       WXPay wxPay = new   WXPay( config);
@@ -249,7 +279,11 @@ public class WeiXinPayControl {
 		       data.put("package","prepay_id="+response.get("prepay_id"));
 		       data.put("signType", "MD5");
 		       data.put("paySign",WXPayUtil.generateSignature(data, config.getKey()));
-		  
+		       // 微信扫码支付时 会多返回一个信息
+		       if("2".equals(type)) {
+		    	   data.put("mweb_url",response.get("mweb_url")); 
+		    	   
+		       }
 		     //新增一条记录 保留付款流水信息
 	    		SsmVipRecord newRecord = new SsmVipRecord ();
 	    		newRecord.setOutTradeNo(out_trade_no);
@@ -261,7 +295,7 @@ public class WeiXinPayControl {
 	    		newRecord.setTotalFee(ssmVipProduct.getPrice());
 	    		newRecord.setProductId(product_id);
 	    		newRecord.setProductPrice(ssmVipProduct.getPrice());
-	    		newRecord.setPayexprietime(Integer.valueOf(String.valueOf(expireTime/1000)));
+	    		newRecord.setPayexprietime(Integer.valueOf(String.valueOf(expireTime/1000)));	    		
 	    		newRecord.setType(Byte.valueOf(type));
 	    		ssmVipRecordService.insertSelective(newRecord);
 		
