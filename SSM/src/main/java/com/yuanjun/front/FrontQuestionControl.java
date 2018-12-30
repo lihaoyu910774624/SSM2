@@ -579,14 +579,26 @@ public class FrontQuestionControl {
 		List<WrongSimulateVo> data = new ArrayList<WrongSimulateVo>();
 		if(ssmSimulateList!=null&&ssmSimulateList.size()>0) {
 			
-		 data= ssmSimulateQuestionService.getWrongSimulate(simulateid);
-		 message.setCode("1");
-		 message.setMsg("获取成功");
-		 message.setData(data);
-			
+					 data= ssmSimulateQuestionService.getWrongSimulate(simulateid);
+					 if(data!=null&&data.size()>0) {
+						 message.setCode("1");
+						 message.setMsg("获取成功");
+						 message.setData(data);
+						 
+					 }else {
+						 // 当分数位零 ssm_simulate_question  score =0 没有数据时 表明已经全部掌握 删除SsmSimulate记录
+						 SsmSimulate  ssmSimulate = new SsmSimulate();
+						 ssmSimulate.setFlag((byte)0);
+						 ssmSimulateService.updateByExampleSelective(ssmSimulate, ssmSimulateExample);
+						 message.setCode("1");
+						 message.setMsg("数据为空");
+						 message.setData(data);
+					 }
 		}else {
+			 // 当分数位零 ssm_simulate_question  score
 			 message.setCode("0");
-			 message.setMsg("获取失败");	
+			 message.setMsg("非法入参");	
+			 message.setData(data);
 		}
 		return message ;
 	}
@@ -624,18 +636,24 @@ public class FrontQuestionControl {
 				message.setCode("0");
 				message.setMsg("操作失败");
 			}
-			SsmSimulateExample ssmSimulateExample = new SsmSimulateExample ();
-			SsmSimulateExample.Criteria ssmSimulateExampleCriteria = ssmSimulateExample.createCriteria();
-			ssmSimulateExampleCriteria.andUseridEqualTo(userid);
-			ssmSimulateExampleCriteria.andSimulateidEqualTo(simulateid);
-			ssmSimulateExampleCriteria.andScoreEqualTo(0);
-			long count = ssmSimulateService.countByExample(ssmSimulateExample);
-		    if(count==0) {
-		    	SsmSimulate ssmSimulate = new SsmSimulate ();
+			
+			List<WrongSimulateVo> data = new ArrayList<WrongSimulateVo>();
+			data= ssmSimulateQuestionService.getWrongSimulate(simulateid);
+			if(data!=null&&data.size()>0) {
+				// 不做操作
+			}else {
+				// simulateid 一次模拟测试分数为0查不到数据时，证明全部掌握 更改标志位 删除记录
+				SsmSimulateExample ssmSimulateExample = new SsmSimulateExample ();
+				SsmSimulateExample.Criteria ssmSimulateExampleCriteria = ssmSimulateExample.createCriteria();
+				ssmSimulateExampleCriteria.andUseridEqualTo(userid);
+				ssmSimulateExampleCriteria.andSimulateidEqualTo(simulateid);
+				SsmSimulate ssmSimulate = new SsmSimulate ();
 		    	ssmSimulate.setFlag((byte)0);
 		    	ssmSimulateService.updateByExampleSelective(ssmSimulate, ssmSimulateExample);
-		    }
-		
+				
+				
+			}
+			
 	  return	 message ;
 	}
 	
