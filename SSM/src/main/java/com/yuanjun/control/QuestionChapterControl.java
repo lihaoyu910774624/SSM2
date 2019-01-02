@@ -200,7 +200,7 @@ public class QuestionChapterControl {
 		
       int start = (currPage - 1) * pageSize;
 
-      int end = currPage * pageSize;
+      int end =  pageSize;
   
       SsmQuestionChapterExample   ssmQuestionChapterExample = new SsmQuestionChapterExample();
       Criteria criteria   =ssmQuestionChapterExample.createCriteria();

@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface SsmVipBuyMapper {
+	 List<String> getCloseOrderRecord();
+	 SsmVipBuy findByOutTradeNo(@Param("out_trade_no") String out_trade_no);
 	SsmVipBuy findByUseridAndCategory(@Param("user_id") String user_id, @Param("categoryid") String categoryid,
 			@Param("categorypid") String categorypid);
     long countByExample(SsmVipBuyExample example);

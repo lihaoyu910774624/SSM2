@@ -75,6 +75,13 @@ public class SsmQuestionStudyServiceImpl implements SsmQuestionStudyService {
 		return ssmQuestionStudyMapper.updateByPrimaryKeySelective(record);
 	}
 
+	@Override
+	public long countByUserid(String userid) {
+		
+		return ssmQuestionStudyMapper.countByUserid(userid);
+	}
+
+	
 	
 
 	

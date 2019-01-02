@@ -35,16 +35,19 @@ public class FrontRecordControl {
 	public RecordMessage getByUserId (@RequestParam(value="userId") String userId) {
 		RecordMessage message = new RecordMessage ();
 		List<RecordDto> data = new ArrayList<RecordDto>();
-		RecordDto  dto = new RecordDto();
+		
 		List<RecordVo> voList = ssmVipRecordService.getByUserId(userId);
 		if(voList!=null&&voList.size()>0) {	
 			for(int i=0;i<voList.size();i++) {
 				RecordVo vo= voList.get(i);
-				Date date = new Date(vo.getExprietime()*1000L);
+				RecordDto  dto = new RecordDto();
+				Date addtime = new Date(vo.getAddtime()*1000L);
+				Date exprietime = new Date(vo.getExprietime()*1000L);
+				
 			    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				dto.setTitle(vo.getTitle());			
-				dto.setAddtime( sd.format(vo.getAddtime()) );			 
-			    dto.setExprietime(sd.format(date));
+				dto.setAddtime( sd.format(addtime) );			 
+			    dto.setExprietime(sd.format(exprietime));
 				data.add(dto);
 				
 			}
@@ -55,6 +58,7 @@ public class FrontRecordControl {
 		}else {
 			message.setCode("0");
 			message.setMsg("查不到数据");
+			message.setData(data);
 			
 		}
 		

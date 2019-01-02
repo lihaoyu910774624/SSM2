@@ -91,15 +91,15 @@ public class FrontStudyControl {
 		 List<StudyQuestion> data = new ArrayList<StudyQuestion>();
 		
     		int start = (currPage - 1) * pageSize;
-    	    int end = currPage * pageSize*4;//每道题有4个答案  所以一道题会有4个记录		记录条数会多4倍	    	    
+    	    int end =  pageSize*4;//每道题有4个答案  所以一道题会有4个记录		记录条数会多4倍	    	    
     	   
-    	    SsmQuestionStudyExample  ssmQuestionStudyExample = new SsmQuestionStudyExample();
+    	 /*   SsmQuestionStudyExample  ssmQuestionStudyExample = new SsmQuestionStudyExample();
     	    SsmQuestionStudyExample.Criteria     ssmQuestionStudyCriteria    =  ssmQuestionStudyExample.createCriteria(); 
     	    // 判断flag
     	    ssmQuestionStudyCriteria.andFlagEqualTo((byte)1);
     	    ssmQuestionStudyCriteria.andKindEqualTo((byte)2);//'1已掌握，2未掌握'  只显示未掌握的
-    	    ssmQuestionStudyCriteria.andStatusEqualTo((byte)2);
-    	    long sumCount  =  ssmQuestionStudyService.countByExample(ssmQuestionStudyExample);
+    	    ssmQuestionStudyCriteria.andStatusEqualTo((byte)2);*/
+    	    long sumCount  =  ssmQuestionStudyService.countByUserid(userid);
     	    
     	    int sumPage =    (int) Math.ceil(Double.valueOf(sumCount)/pageSize)    ;  			    	    
     	    data=ssmQuestionStudyService.getStudyInfoByUserId( category_id, start, end, userid); 
@@ -131,6 +131,7 @@ public class FrontStudyControl {
     	    }
 		return message ;
 	}
+	
 	
 	
 	@RequestMapping(value="/saveStudy", method=RequestMethod.POST)
@@ -184,12 +185,12 @@ public class FrontStudyControl {
 	    int index = ssmQuestionStudyService.updateByPrimaryKeySelective(ssmQuestionStudy);
 	    if(index>0) {
 	    	message.setCode("1");
-	    	message.setMsg("数据更新成功");
+	    	message.setMsg("操作成功");
 	    	
 	    }else {
 	    	
 	    	message.setCode("0");
-	    	message.setMsg("数据查询失败");
+	    	message.setMsg("操作失败");
 	    }
 	    
 	    

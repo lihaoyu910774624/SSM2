@@ -109,7 +109,7 @@
     ORDER BY a.addtime desc limit 0,1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from ssm_code as a
+    delete from ssm_code 
     where id = #{id,jdbcType=INTEGER}
     
   </delete>

@@ -181,7 +181,7 @@ public class ProductControl {
 			@RequestParam(value="adminId") String adminId,
 			@RequestParam(value="productId") String productId,
 			@RequestParam(value="title") String title,
-			@RequestParam(value="price") Integer price,
+			@RequestParam(value="price") String price,
 			@RequestParam(value="effectdays") Integer effectdays
 			) 
 	{
@@ -201,7 +201,7 @@ public class ProductControl {
 		product.setProductId(productId);
 		product.setTitle(title);
 		
-		product.setPrice(price*100);
+		product.setPrice((int)(Double.valueOf(price)*100));
 		product.setEffectdays(effectdays);
 		
 		int index=ssmVipProductService.updateByExampleSelective(product, example);

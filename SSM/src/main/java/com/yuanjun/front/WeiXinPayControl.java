@@ -122,6 +122,56 @@ public class WeiXinPayControl {
 		
 	}
 	
+	@RequestMapping(value="/closeorder", method=RequestMethod.GET)
+	@ResponseBody 
+	public String closeorder() throws Exception {
+		// 返回数据 1成功   0 失败 
+		// 从视图总取出 out_trade_no
+		   List<String> outTradeNoList =ssmVipBuyService.getCloseOrderRecord(); 
+		   if(outTradeNoList!=null&&outTradeNoList.size()>0) {
+			   for(int i=0;i<outTradeNoList.size();i++) {
+				   String out_trade_no =  outTradeNoList.get(i);
+				   Map<String, String> data = new HashMap<String, String>();
+				   Map<String, String> response = new HashMap<String, String>();
+				   MyConfig  config = new MyConfig();
+				   WXPay wxPay = new   WXPay( config);
+				   data.put("appid",config.getAppID());
+				   data.put("mch_id",config.getMchID());
+				   data.put("out_trade_no",out_trade_no);
+				   data.put("sign_type", "MD5");
+				   data.put("nonce_str",WXPayUtil.generateNonceStr());
+				   data.put("sign",WXPayUtil.generateSignature(data, config.getKey()));
+				   response= wxPay.closeOrder(data);
+				   logger.info("订单关闭返回数据"+response.toString());
+				   String returnCode = response.get("return_code");
+			       String resultCode = response.get("result_code");
+				   
+			       if (!"SUCCESS".equals(returnCode)) {
+						return "0" ;
+			       }
+			       if(!"SUCCESS".equals(resultCode)) {
+						return "0" ;
+			       }
+				   // 更新record表  ispay 为2  flag 为 0
+			        SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+		    		SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
+		    		ssmVipRecordCriteria.andFlagEqualTo((byte)1);
+		    		ssmVipRecordCriteria.andOutTradeNoEqualTo(out_trade_no);    		
+		    		SsmVipRecord ssmVipRecord = new SsmVipRecord();     		
+		    		ssmVipRecord.setIspay((byte)2);//1支付0未支付 2 关闭支付
+		    		ssmVipRecord.setFlag((byte)0);
+		    		ssmVipRecordService.updateByExampleSelective(ssmVipRecord, ssmVipRecordExample);
+			   }
+		   }else {
+			   
+			   return "0" ;
+		   }
+		   
+		  
+		
+		return "1" ;
+	}
+	
 	
 	@RequestMapping(value="/unifiedorder", method=RequestMethod.POST)
 	@ResponseBody 
@@ -136,11 +186,13 @@ public class WeiXinPayControl {
 			
 			) throws Exception{
 		MapMessage message = new MapMessage();
+		Map<String, String> data = new HashMap<String, String>();
 			//校验用户 是否存在
 		UserInfo user    =ssmUserService.getUserInfoById(userid);	
 		if(user==null) {
 			message.setCode("0");
-			message.setMsg("0");			
+			message.setMsg("非法用户");
+			message.setData(data);
 			return message ;
 		}
 		if(StringUtils.isNotBlank(type)) {
@@ -150,7 +202,8 @@ public class WeiXinPayControl {
 			if(!typeList.contains(type) ){
 				
 				message.setCode("0");
-				message.setMsg("0");			
+				message.setMsg("支付方式错误");
+				message.setData(data);
 				return message ;
 				
 			}
@@ -169,7 +222,8 @@ public class WeiXinPayControl {
 			ssmVipProduct = ssmVipProductList.get(0);
 		}else {
 			message.setCode("0");
-			message.setMsg("入参不合法");			
+			message.setMsg("入参不合法");
+			message.setData(data);
 			return message ;
 		}
 		
@@ -250,13 +304,15 @@ public class WeiXinPayControl {
 		       
 		       if (!"SUCCESS".equals(returnCode)) {
 		    	    message.setCode("0");
-					message.setMsg("请求失败"+response.get("return_msg"));			
+					message.setMsg("请求失败"+response.get("return_msg"));	
+					message.setData(data);
 					return message ;
 		       }
 		       if(!"SUCCESS".equals(resultCode)) {
 		    	   
 		    	    message.setCode("0");
-					message.setMsg("请求失败"+response.get("err_code"));			
+					message.setMsg("请求失败"+response.get("err_code"));	
+					message.setData(data);
 					return message ;
 		    	   
 		    	   
@@ -265,13 +321,14 @@ public class WeiXinPayControl {
 		       String prepay_id = response.get("prepay_id");
 		       if (prepay_id == null) {
 		    	    message.setCode("0");
-					message.setMsg("请求失败,prepay_id没有值");			
+					message.setMsg("请求失败,prepay_id没有值");
+					message.setData(data);
 					return message ;
 		       }
 		       
 		         //返参
 				// nonce_str   sign  prepay_id  二维码链接	code_url
-		       Map<String, String> data = new HashMap<String, String>();
+		     
 		       
 		       data.put("appId",config.getAppID());
 		       data.put("timeStamp",String.valueOf(WXPayUtil.getCurrentTimestamp()));
@@ -377,67 +434,78 @@ public class WeiXinPayControl {
 	            }
                 
 	            // 业务逻辑处理 ****************************
-	            String transaction_id = notifyMap.get("transaction_id");
 	            
-	            // 支付成功 更新  ssm_vip_record  
-	            SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
-	    		SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
-	    		ssmVipRecordCriteria.andFlagEqualTo((byte)1);
-	    		ssmVipRecordCriteria.andOutTradeNoEqualTo(out_trade_no);
-	    		List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);	
-	    		SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
-	    		ssmVipRecord.setTransactionId(transaction_id);
-	    		ssmVipRecord.setIspay((byte)1);//1支付0未支付
-	    		
-	    		
-	    		SsmVipProductExample ssmVipProductExample = new SsmVipProductExample();
-	    		SsmVipProductExample.Criteria   ssmVipProductExampleCriteria = ssmVipProductExample.createCriteria();
-	    		ssmVipProductExampleCriteria.andFlagEqualTo((byte)1);
-	    		ssmVipProductExampleCriteria.andProductIdEqualTo(ssmVipRecord.getProductId());
-	    		List<SsmVipProduct> ssmVipProductList = ssmVipProductService.selectByExample(ssmVipProductExample);
-	    		SsmVipProduct	ssmVipProduct = ssmVipProductList.get(0);
-	    		int effectdays = ssmVipProduct.getEffectdays();
-	    		
-	    		long addtim = new Date().getTime()/1000;//数据库时间按秒计算 充值时间
-	    		Integer exprietime = Integer.valueOf(String.valueOf(addtim +60*60*24*effectdays))  ;
-	    		ssmVipRecord.setExprietime(exprietime);
-	    		//支付成功 更新  ssm_vip_record  
-	    		ssmVipRecordService.updateByExampleSelective(ssmVipRecord, ssmVipRecordExample);
-	    		
-	    		//ssm_vip_buy 操作  有就更新过期时间字段  没有就添加
-	    		SsmVipBuy	ssmVipBuy= ssmVipBuyService.findByUseridAndCategory(ssmVipRecord.getUserId(),
-					    				String.valueOf(ssmVipRecord.getCategoryid()),
-					    				String.valueOf(ssmVipRecord.getCategorypid()));
-	    		
-	    		if(ssmVipBuy==null) {
-	    			ssmVipBuy=new SsmVipBuy();
-	    			ssmVipBuy.setUserId(ssmVipRecord.getUserId());
-	    			ssmVipBuy.setCategoryid(Byte.valueOf(String.valueOf(ssmVipRecord.getCategoryid())));
-	    			ssmVipBuy.setCategorypid(Byte.valueOf(String.valueOf(ssmVipRecord.getCategorypid())));
-	    			ssmVipBuy.setProductId(ssmVipRecord.getProductId());
-	    			ssmVipBuy.setOutTradeNo(out_trade_no);
-	    			ssmVipBuy.setAddtime(Integer.valueOf(String.valueOf(addtim)));
-	    			ssmVipBuy.setExprietime(exprietime);
-	    			ssmVipBuyService.insertSelective(ssmVipBuy);
-	    		}else {
-	    			int oldExprietime = ssmVipBuy.getExprietime();
-	    			if(addtim<oldExprietime) {
-	    				// vip 有效 在原来的基础上增加vip时间
-	    				oldExprietime= oldExprietime+60*60*24*effectdays;
-	    				ssmVipBuy.setExprietime(oldExprietime);
-	    				ssmVipBuy.setOutTradeNo(out_trade_no);
-	    				ssmVipBuy.setProductId(ssmVipRecord.getProductId());
-	    				ssmVipBuyService.updateByPrimaryKeySelective(ssmVipBuy);
-	    			}else {
-	    				// vip 无效则更新 新的vip截止时间
-	    				ssmVipBuy.setExprietime(exprietime);
-	    				ssmVipBuy.setOutTradeNo(out_trade_no);
-	    				ssmVipBuy.setProductId(ssmVipRecord.getProductId());
-	    				ssmVipBuyService.updateByPrimaryKeySelective(ssmVipBuy);
-	    				
-	    			}
-	    			
-	    		}	
+	            
+	            //  先查看  ssm_vip_buy  out_trade_no  确认是否为重复调用
+	            SsmVipBuy	buyRecord = ssmVipBuyService.findByOutTradeNo(out_trade_no);
+	            if(buyRecord==null) {
+	            	
+	            	
+			            	 String transaction_id = notifyMap.get("transaction_id");
+			 	            
+			 	            // 支付成功 更新  ssm_vip_record  
+			 	            SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
+			 	    		SsmVipRecordExample.Criteria ssmVipRecordCriteria = ssmVipRecordExample.createCriteria();
+			 	    		ssmVipRecordCriteria.andFlagEqualTo((byte)1);
+			 	    		ssmVipRecordCriteria.andOutTradeNoEqualTo(out_trade_no);
+			 	    		List<SsmVipRecord> ssmVipRecordList = ssmVipRecordService.selectByExample(ssmVipRecordExample);	
+			 	    		SsmVipRecord ssmVipRecord = ssmVipRecordList.get(0); 
+			 	    		ssmVipRecord.setTransactionId(transaction_id);
+			 	    		ssmVipRecord.setIspay((byte)1);//1支付0未支付
+			 	    		
+			 	    		
+			 	    		SsmVipProductExample ssmVipProductExample = new SsmVipProductExample();
+			 	    		SsmVipProductExample.Criteria   ssmVipProductExampleCriteria = ssmVipProductExample.createCriteria();
+			 	    		ssmVipProductExampleCriteria.andFlagEqualTo((byte)1);
+			 	    		ssmVipProductExampleCriteria.andProductIdEqualTo(ssmVipRecord.getProductId());
+			 	    		List<SsmVipProduct> ssmVipProductList = ssmVipProductService.selectByExample(ssmVipProductExample);
+			 	    		SsmVipProduct	ssmVipProduct = ssmVipProductList.get(0);
+			 	    		int effectdays = ssmVipProduct.getEffectdays();
+			 	    		
+			 	    		long addtim = new Date().getTime()/1000;//数据库时间按秒计算 充值时间
+			 	    		Integer exprietime = Integer.valueOf(String.valueOf(addtim +60*60*24*effectdays))  ;
+			 	    		ssmVipRecord.setExprietime(exprietime);
+			 	    		//支付成功 更新  ssm_vip_record  
+			 	    		ssmVipRecordService.updateByExampleSelective(ssmVipRecord, ssmVipRecordExample);
+			 	    		
+			 	    		//ssm_vip_buy 操作  有就更新过期时间字段  没有就添加
+			 	    		SsmVipBuy	ssmVipBuy= ssmVipBuyService.findByUseridAndCategory(ssmVipRecord.getUserId(),
+			 					    				String.valueOf(ssmVipRecord.getCategoryid()),
+			 					    				String.valueOf(ssmVipRecord.getCategorypid()));
+			 	    		
+			 	    		if(ssmVipBuy==null) {
+			 	    			ssmVipBuy=new SsmVipBuy();
+			 	    			ssmVipBuy.setUserId(ssmVipRecord.getUserId());
+			 	    			ssmVipBuy.setCategoryid(Byte.valueOf(String.valueOf(ssmVipRecord.getCategoryid())));
+			 	    			ssmVipBuy.setCategorypid(Byte.valueOf(String.valueOf(ssmVipRecord.getCategorypid())));
+			 	    			ssmVipBuy.setProductId(ssmVipRecord.getProductId());
+			 	    			ssmVipBuy.setOutTradeNo(out_trade_no);
+			 	    			ssmVipBuy.setAddtime(Integer.valueOf(String.valueOf(addtim)));
+			 	    			ssmVipBuy.setExprietime(exprietime);
+			 	    			ssmVipBuyService.insertSelective(ssmVipBuy);
+			 	    		}else {
+			 	    			int oldExprietime = ssmVipBuy.getExprietime();
+			 	    			if(addtim < oldExprietime) {
+			 	    				// vip 有效 在原来的基础上增加vip时间
+			 	    				oldExprietime= oldExprietime+60*60*24*effectdays;
+			 	    				ssmVipBuy.setExprietime(oldExprietime);
+			 	    				ssmVipBuy.setOutTradeNo(out_trade_no);
+			 	    				ssmVipBuy.setProductId(ssmVipRecord.getProductId());
+			 	    				ssmVipBuyService.updateByPrimaryKeySelective(ssmVipBuy);
+			 	    			}else {
+			 	    				// vip 无效则更新 新的vip截止时间
+			 	    				ssmVipBuy.setExprietime(exprietime);
+			 	    				ssmVipBuy.setOutTradeNo(out_trade_no);
+			 	    				ssmVipBuy.setProductId(ssmVipRecord.getProductId());
+			 	    				ssmVipBuyService.updateByPrimaryKeySelective(ssmVipBuy);
+			 	    			}
+			 	    			
+			 	    		}	
+			            	
+	            	
+	            }
+	            
+	           
 	    			
 	    			
 	    	
@@ -458,6 +526,9 @@ public class WeiXinPayControl {
 	    return xmlBack;
 	}
 
+	
+	
+	
 	
 
 	

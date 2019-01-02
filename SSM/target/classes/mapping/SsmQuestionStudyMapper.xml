@@ -96,7 +96,19 @@
         myanser=values(myanser),
         chapterid=values(chapterid)
     </insert>
-    
+		    <select id="countByUserid"   resultType="java.lang.Long">
+			SELECT
+			COUNT(a.id)
+			FROM
+			ssm_question_study a
+			LEFT JOIN ssm_question_option b ON a.questionid = b.questionid
+			WHERE
+			a.flag =1
+			and a.status =2
+			and a.kind =2		
+			and a.userid =#{userid}
+			;
+    </select>
   
   
   <sql id="Example_Where_Clause">

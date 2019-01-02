@@ -42,4 +42,18 @@ public class SsmVipBuyServiceImpl implements SsmVipBuyService {
 		return ssmVipBuyMapper.updateByPrimaryKeySelective(record);
 	}
 
+	@Override
+	public SsmVipBuy findByOutTradeNo(String out_trade_no) {
+		
+		return ssmVipBuyMapper.findByOutTradeNo(out_trade_no);
+	}
+
+	@Override
+	public List<String> getCloseOrderRecord() {
+		
+		return ssmVipBuyMapper.getCloseOrderRecord();
+	}
+
+	
+
 }

@@ -170,7 +170,7 @@ public class FrontQuestionControl {
 			    	if(now<exprietime) {
 			    		// vip 还在有效期内  显示所有题的内容
 			    		int start = (currPage - 1) * pageSize;
-			    	    int end = currPage * pageSize;			    	    
+			    	    int end =  pageSize;			    	    
 			    	    SsmQuestionExample example = new SsmQuestionExample();
 			    	    SsmQuestionExample.Criteria ssmQuestionExampleCriteria = example.createCriteria();
 			    	    ssmQuestionExampleCriteria.andFlagEqualTo((byte)1);	     
@@ -216,7 +216,7 @@ public class FrontQuestionControl {
 			    	  
 			    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 3);
 			    		// vip 过期  至显示免费题目
-			    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 14,userid);
+			    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 100,userid);
 			    		 if (data != null && data.size() > 0) {
 			 				for (int i = 0; i < data.size(); i++) {
 			 					TrainingQuestion trainingQuestion = data.get(i);
@@ -253,7 +253,7 @@ public class FrontQuestionControl {
 		    	  
 		    	    long panduan = ssmQuestionService.countByType(category_pid, category_id, "0", 1, 3);
 		    		// 没有查找到购买记录  显示免费题目
-		    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 14,userid);
+		    		 data=ssmQuestionService.findTrainingQuestionFree(category_pid, category_id,"0", 0, 100,userid);
 		    		 if (data != null && data.size() > 0) {
 			 				for (int i = 0; i < data.size(); i++) {
 			 					TrainingQuestion trainingQuestion = data.get(i);
@@ -332,22 +332,7 @@ public class FrontQuestionControl {
 				return message ;
 			}
 			
-			SsmSimulate ssmSimulate = new SsmSimulate ();
-			String simulateid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
-		    long  startTime = System.currentTimeMillis()/1000;	       // 考试起始时间
-		    long  endTime = startTime+60*70;// 70分钟后考试时间结束
-			ssmSimulate.setUserid(userid);
-			ssmSimulate.setSimulateid(simulateid);
-			ssmSimulate.setStartTime((int)startTime);
-			ssmSimulate.setEndTime((int)endTime);
-			//保存新加字段 pid
-			// ssmSimulate
-			ssmSimulateService.insertSelective(ssmSimulate);
 			
-			// 将数据放入返回值总
-			message.setSimulateid(simulateid);
-			message.setStartTime(startTime);
-			message.setEndTime(endTime);
 			
 		//按分类出题 判断用户是否为当前分类的付费用户
 			/*SsmVipRecordExample  ssmVipRecordExample = new SsmVipRecordExample ();
@@ -366,6 +351,26 @@ public class FrontQuestionControl {
 			    	long exprietime = ssmVipBuy.getExprietime();
 			    	long now = System.currentTimeMillis()/1000;
 			    	if(now<exprietime) {
+			    		SsmSimulate ssmSimulate = new SsmSimulate ();
+						String simulateid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+					    long  startTime = System.currentTimeMillis()/1000;	       // 考试起始时间
+					    long  endTime = startTime+60*70;// 70分钟后考试时间结束
+						ssmSimulate.setUserid(userid);
+						ssmSimulate.setSimulateid(simulateid);
+						ssmSimulate.setStartTime((int)startTime);
+						ssmSimulate.setEndTime((int)endTime);
+						//保存新加字段 pid
+						// ssmSimulate
+						ssmSimulateService.insertSelective(ssmSimulate);
+						
+						// 将数据放入返回值总
+						message.setSimulateid(simulateid);
+						message.setStartTime(startTime);
+						message.setEndTime(endTime);
+			    		
+			    		
+			    		
+			    		
 			    		// 获取随机id
 			    		Integer id =   ssmQuestionService.getRoundId() ;
 			    		
@@ -415,9 +420,12 @@ public class FrontQuestionControl {
 			    		vo.setDanxuan(danxuan);
 			    		vo.setDuoxuan(duoxuan);
 			    		vo.setPanduan(panduan);*/
-			    		//message.setData(vo);
+			    		
 			    		message.setCode("0");
-						message.setMsg("0");			
+						message.setMsg("0");
+						message.setSimulateid("");
+						message.setStartTime(0);
+						message.setEndTime(0);
 						return message ;
 			    		
 			    	}
@@ -433,8 +441,12 @@ public class FrontQuestionControl {
 		    		vo.setDuoxuan(duoxuan);
 		    		vo.setPanduan(panduan);
 		    		message.setData(vo);*/
+			    	
 		    		message.setCode("0");
-					message.setMsg("0");			
+					message.setMsg("0");
+					message.setSimulateid("");
+					message.setStartTime(0);
+					message.setEndTime(0);
 					return message ;
 			    	
 			    }
@@ -485,13 +497,7 @@ public class FrontQuestionControl {
 					    		for(int i=0;i<myanserSimulateList.size();i++) {
 					    			MyanserSimulate anser= myanserSimulateList.get(i);
 					    			simulateQuestionVo  vo = new simulateQuestionVo ();
-					    			//SsmSimulateQuestion simulate = new SsmSimulateQuestion();
-					    			/*simulate.setSimulateid(simulateid);
-					    			simulate.setQuestionid(anser.getQuestionid());
-					    			simulate.setMyanswer(anser.getMyanser());
-					    			simulate.setScore((byte)anser.getScore());
-					    			simulate.setFlag((byte)1);
-					    			ssmSimulateQuestionService.insertSelective(simulate);*/
+					    			
 					    			
 					    			vo.setSimulateid(simulateid);
 					    			vo.setQuestionid(anser.getQuestionid());
@@ -619,6 +625,14 @@ public class FrontQuestionControl {
 			ssmSimulateQuestionExampleCriteria.andSimulateidEqualTo(simulateid);
 			ssmSimulateQuestionExampleCriteria.andQuestionidEqualTo(questionid);
 			SsmSimulateQuestion ssmSimulateQuestion = new SsmSimulateQuestion();
+			List<String> typeList = new ArrayList<String>();
+			typeList.add("1");
+			typeList.add("2");
+			typeList.add("3");
+			if(!typeList.contains(type)) {
+				 message.setCode("0");
+				 message.setMsg("非法入参");	
+			}
 			if("1".equals(type)||"3".equals(type)) {
 				ssmSimulateQuestion.setScore((byte)1);
 				

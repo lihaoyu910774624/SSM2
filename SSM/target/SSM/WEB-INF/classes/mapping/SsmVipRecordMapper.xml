@@ -49,6 +49,7 @@
 		A.total_fee totalFee,
 		A.exprietime exprietime,
 		A.paytime paytime,
+		A.ispay  ispay,
 		B.title title,
 		C.phone phone ,
 		D.title as categoryTitle
@@ -60,7 +61,7 @@
 		<if test="phone !=null and phone != ''">
 		   and C.phone    LIKE  CONCAT('%',#{phone},'%')    
 		</if>
-		ORDER BY A.addtime
+		ORDER BY A.paytime DESC
 		limit #{start},#{end}
   </select>
   
@@ -77,7 +78,7 @@
   
   <select id="getByUserId" parameterType="java.lang.String"
 	resultType="com.yuanjun.vo.frontRecord.RecordVo">
-	select b.title title ,a.addtime addtime , a.exprietime exprietime  from ssm_vip_record a LEFT JOIN ssm_category b ON
+	select b.title title ,a.addtime addtime , a.exprietime exprietime  from ssm_vip_buy a LEFT JOIN ssm_category b ON
 	a.categoryid=b.id
 	where a.flag =1
 	and a.user_id = #{userId} ;

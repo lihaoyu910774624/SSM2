@@ -54,7 +54,7 @@ public class VipRecordControl {
 		long sumCount ;
 		int start = (Integer.valueOf(currPage).intValue() - 1) * Integer.valueOf(pageSize).intValue();
 
-	    int end = Integer.valueOf(currPage).intValue() * Integer.valueOf(pageSize).intValue();
+	    int end =  Integer.valueOf(pageSize).intValue();
 	    
 	   
 	    if(phone!=null&&!"".equals(phone)) {
@@ -93,7 +93,7 @@ public class VipRecordControl {
 			
 			vipRecordListMessage.setCode("0");
 			vipRecordListMessage.setMsg("数据查询失败");
-			
+			vipRecordListMessage.setData(data);
 		}	
 		return vipRecordListMessage ;
 	}

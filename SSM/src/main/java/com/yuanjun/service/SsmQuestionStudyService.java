@@ -13,6 +13,7 @@ import com.yuanjun.vo.frontStudy.StudyQuestion;
 import com.yuanjun.vo.frontStudy.StudyTitleVo;
 
 public interface SsmQuestionStudyService {
+	long countByUserid(String userid);
 	int updateByPrimaryKeySelective(SsmQuestionStudy record);
 	int saveStudyAll( QuestionStudyModel questionStudyModel );
 

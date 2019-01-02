@@ -12,7 +12,16 @@ public class VipRecordVo {
 	private String  title;
 	private String 	phone;
 	private String  categoryTitle;
+	private String 	ispay;
 	
+	
+	
+	public String getIspay() {
+		return ispay;
+	}
+	public void setIspay(String ispay) {
+		this.ispay = ispay;
+	}
 	public String getOutTradeNo() {
 		return outTradeNo;
 	}

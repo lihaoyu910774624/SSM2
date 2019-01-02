@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class RecordVo {
 	private String title ;
-	private Date addtime ;
+	private long addtime ;
 	private long exprietime ;
 	public String getTitle() {
 		return title;
@@ -12,10 +12,10 @@ public class RecordVo {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Date getAddtime() {
+	public long getAddtime() {
 		return addtime;
 	}
-	public void setAddtime(Date addtime) {
+	public void setAddtime(long addtime) {
 		this.addtime = addtime;
 	}
 	public long getExprietime() {
@@ -24,6 +24,7 @@ public class RecordVo {
 	public void setExprietime(long exprietime) {
 		this.exprietime = exprietime;
 	}
+	
 	
 
 	

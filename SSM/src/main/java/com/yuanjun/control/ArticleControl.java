@@ -90,7 +90,7 @@ public class ArticleControl
     }
 
     int start = (currPage.intValue() - 1) * pageSize.intValue();
-    int end = currPage.intValue() * pageSize.intValue();
+    int end = pageSize.intValue();
     int sumCount = this.ssmArticleService.getCount().intValue();
     int sumPage = (int)Math.ceil(Double.valueOf(sumCount).doubleValue() / pageSize.intValue());
     data = this.ssmArticleService.getAll(title, start, end);

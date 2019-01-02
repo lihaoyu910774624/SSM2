@@ -15,6 +15,7 @@ import com.yuanjun.vo.frontStudy.StudyTitleVo;
 
 
 public interface SsmQuestionStudyMapper {
+	long countByUserid(@Param("userid") String userid);
 	int saveStudyAll(@Param("questionStudyModel") QuestionStudyModel questionStudyModel );
 	 List<StudyQuestion>  getStudyInfoByUserId(    @Param("category_id") String category_id,			
 			  @Param("start") int start, @Param("end") int end ,@Param("userid") String userid);

@@ -139,7 +139,7 @@ public class LoginControl {
 	public MapMessage phoneMessageLogin( 
 			String phone,  String codenum,String password,String password2,String name,String categoryid,String cityid) {
 		MapMessage reMsg = new MapMessage();
-		Map data = new HashMap();
+		Map<String,String> data = new HashMap<String,String>();
 				Boolean isPhone =   PhoneVadation.isPhone(phone);
 				if(!isPhone) {					
 					data.put("code", "");					

@@ -386,7 +386,7 @@ public class QuestionControl
     try {
       int start = (Integer.valueOf(currPage).intValue() - 1) * Integer.valueOf(pageSize).intValue();
 
-      int end = Integer.valueOf(currPage).intValue() * Integer.valueOf(pageSize).intValue();
+      int end =  Integer.valueOf(pageSize).intValue();
 
       SsmQuestionExample questionExample = new SsmQuestionExample();
       SsmQuestionExample.Criteria questionCriteria = questionExample.createCriteria();

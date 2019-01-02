@@ -45,7 +45,7 @@ public class QuestionOptionControl {
 			return message ;
 		}		
 		int start = (currPage - 1) * pageSize;
-	    int end = currPage * pageSize;
+	    int end =  pageSize;
 		SsmQuestionOptionExample example = new SsmQuestionOptionExample();
 		SsmQuestionOptionExample.Criteria criteria=   example.createCriteria() ;
 		criteria.andFlagEqualTo((byte)1);

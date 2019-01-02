@@ -54,7 +54,7 @@ public class ManageUserControl {
 
       int firstIndex = (currPage - 1) * pageSize;
 
-      int lastIndex = currPage * pageSize;
+      int lastIndex =  pageSize;
      
       int sumCount = ssmUserService.getCount();
     

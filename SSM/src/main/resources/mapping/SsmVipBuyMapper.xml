@@ -13,7 +13,9 @@
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="flag" jdbcType="TINYINT" property="flag" />
   </resultMap>
-  <select id=""></select>
+  <select id="getCloseOrderRecord" resultType="java.lang.String">
+      select out_trade_no from close_order_record 
+  </select>
   <select id="findByUseridAndCategory"  resultType="com.yuanjun.bean.SsmVipBuy">
 			SELECT
 				*
@@ -24,9 +26,21 @@
 			AND a.user_id =#{user_id}
 			AND a.categoryid=#{categoryid}
 			AND a.categorypid=#{categorypid}
-			ORDER BY a.addtime 
+			ORDER BY a.addtime DESC
 			limit 1
   </select>
+   <select id="findByOutTradeNo"  resultType="com.yuanjun.bean.SsmVipBuy">
+			SELECT
+				*
+			FROM
+				ssm_vip_buy a
+			WHERE
+				a.flag = 1
+			AND a.out_trade_no =#{out_trade_no}			
+			ORDER BY a.addtime DESC
+			limit 1
+  </select>
+  
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
